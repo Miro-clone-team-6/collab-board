@@ -1,0 +1,30 @@
+{
+  "name": "@collab-board/frontend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .next .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@collab-board/shared": "workspace:*",
+    "next": "^16.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@collab-board/eslint-config": "workspace:*",
+    "@collab-board/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^10.14.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@collab-board/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    "./base": "./base.js",
+    "./fsd": "./fsd.js",
+    "./next": "./next.js"
+  },
+  "files": [
+    "base.js",
+    "fsd.js",
+    "next.js"
+  ],
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint-config-next": "^16.4.5",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "typescript-eslint": "^8.72.1"
+  },
+  "peerDependencies": {
+    "eslint": ">=9"
+  }
+}

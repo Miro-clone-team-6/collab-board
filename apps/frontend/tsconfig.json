@@ -1,0 +1,10 @@
+{
+  "extends": "@collab-board/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "*.ts", "*.mjs", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
+}
