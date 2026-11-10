@@ -1,0 +1,48 @@
+{
+  "name": "collab-board",
+  "private": true,
+  "engines": {
+    "node": ">=22.x"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=web",
+    "dev:api": "turbo dev --filter=api",
+    "build:web": "turbo build --filter=web",
+    "build:api": "turbo build --filter=api",
+    "build:ui": "turbo build --filter=@packages/ui",
+    "build:dto": "turbo build --filter=@packages/dto",
+    "build:types": "turbo build --filter=@packages/types",
+    "build:utils": "turbo build --filter=@packages/utils",
+    "build:tailwind-config": "turbo build --filter=@packages/tailwind-config",
+    "typecheck": "turbo typecheck",
+    "lint": "biome check --no-errors-on-unmatched",
+    "lint:fix": "biome check --write --no-errors-on-unmatched",
+    "format": "biome format --write --no-errors-on-unmatched",
+    "test": "turbo test",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "db:migrate": "pnpm --filter api db:migrate:dev",
+    "db:migrate:deploy": "pnpm --filter api db:migrate:deploy",
+    "db:generate": "pnpm --filter api db:generate",
+    "db:seed": "pnpm --filter api db:seed",
+    "generate:api": "pnpm --filter api generate:openapi",
+    "generate:client": "orval --config ./orval.config.ts",
+    "codegen": "pnpm run generate:api && pnpm run generate:client",
+    "codegen:check": "pnpm run generate:client && git diff --exit-code -- packages/api/src/generated",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "orval": "^8.47.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  }
+}
