@@ -7,14 +7,12 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check --no-errors-on-unmatched"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.66.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
     "@packages/typescript-config": "workspace:*",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",

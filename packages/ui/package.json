@@ -7,8 +7,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check --no-errors-on-unmatched"
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

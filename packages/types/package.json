@@ -11,8 +11,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check --no-errors-on-unmatched"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@packages/typescript-config": "workspace:*",

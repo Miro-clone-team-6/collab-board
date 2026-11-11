@@ -87,9 +87,6 @@ importers:
         specifier: ^2.9.1
         version: 2.9.1
     devDependencies:
-      '@biomejs/biome':
-        specifier: 2.4.2
-        version: 2.4.2
       '@nestjs/cli':
         specifier: ^11.0.2
         version: 11.0.24(@types/node@22.20.5)(esbuild@0.28.2)(prettier@3.9.10)
@@ -178,9 +175,6 @@ importers:
         specifier: ^3.0.1
         version: 3.7.0
     devDependencies:
-      '@biomejs/biome':
-        specifier: 2.4.2
-        version: 2.4.2
       '@feature-sliced/steiger-plugin':
         specifier: 0.8.2
         version: 0.8.2(typescript@5.9.3)
@@ -224,9 +218,6 @@ importers:
         specifier: ^5.66.0
         version: 5.107.1(@types/react@19.3.0)(react@19.0.0)
     devDependencies:
-      '@biomejs/biome':
-        specifier: 2.4.2
-        version: 2.4.2
       '@packages/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -246,9 +237,6 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@biomejs/biome':
-        specifier: 2.4.2
-        version: 2.4.2
       '@packages/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config

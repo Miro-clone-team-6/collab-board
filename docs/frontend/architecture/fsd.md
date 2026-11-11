@@ -144,7 +144,7 @@ Biome правила FSD не проверяет: инструменты нез�
 
 | Команда | Что делает |
 |---|---|
-| `pnpm lint` | Biome, затем Steiger. Входит в проверку перед завершением задачи |
+| `pnpm lint` | Biome и Steiger параллельно через turbo, с кэшем. Входит в проверку перед завершением задачи |
 | `pnpm lint:fsd` | Только Steiger (через turbo, с кэшем) |
 | `pnpm --filter web lint:fsd` | `steiger ./src` без turbo |
 

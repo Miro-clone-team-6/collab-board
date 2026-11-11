@@ -35,6 +35,7 @@
 * `build`: сборка пакетов запускается с учетом зависимостей (`dependsOn: ["^build"]`).
 * `typecheck`: `dependsOn: ["topo"]`, где `topo` — пустая задача с `dependsOn: ["^topo"]` (приём из гайда Turborepo).
   Проверки идут параллельно, но кэш сбрасывается при изменении зависимостей. Сборка не нужна: `types` пакетов указывает на `src`.
+* `lint:biome`: корневая задача (`//#lint:biome`), Biome проверяет весь репозиторий одним запуском — как советует [гайд Turborepo](https://turborepo.dev/docs/guides/tools/biome). Скриптов `lint` в пакетах нет.
 * `lint:fsd`: Steiger, без зависимостей; кэш по исходникам FSD и `tsconfig` — см. [fsd.md](../architecture/fsd.md#5-проверка-steiger).
 
 ```text

@@ -7,9 +7,7 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "lint": "biome check --no-errors-on-unmatched",
     "lint:fsd": "steiger ./src",
-    "format": "biome format --write --no-errors-on-unmatched",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   },
@@ -30,7 +28,6 @@
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
     "@feature-sliced/steiger-plugin": "0.8.2",
     "@packages/typescript-config": "workspace:*",
     "@tanstack/react-query-devtools": "^5.66.0",

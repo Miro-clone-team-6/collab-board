@@ -11,9 +11,7 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "inputs": ["$TURBO_DEFAULT$"]
-    },
+    "//#lint:biome": {},
     "lint:fsd": {
       "inputs": ["src/**", "steiger.config.ts", "tsconfig.json"],
       "outputs": []
