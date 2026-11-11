@@ -173,7 +173,7 @@ Biome правила FSD не проверяет: инструменты нез�
 
 ### Где запускается
 
-- **turbo:** задача `lint:fsd`, кэш по `src/**`, `steiger.config.ts`, `tsconfig.json`, `tsconfig.base.json`.
+- **turbo:** задача `lint:fsd`, кэш по `src/**`, `steiger.config.ts`, `tsconfig.json`.
   `tsconfig` во входах, потому что Steiger берёт из него алиас `@/` для разрешения импортов.
 - **pre-commit:** если в коммите есть файлы из `apps/web/src/**` или `steiger.config.ts`, lint-staged
   один раз запускает `pnpm lint:fsd` на весь `src` — правилам о связях между слайсами нужен весь проект,

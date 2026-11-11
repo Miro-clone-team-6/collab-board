@@ -14,13 +14,50 @@ apps/
   telegram-bot/ заготовка (.gitkeep)
 packages/
   api/              клиент API от Orval — убирается (ADR 0001 ⏸)
-  dto/              Zod-схемы (ESM + CJS через Rslib) — роль обсуждается, см. ADR 0001
+  dto/              Zod-схемы — роль обсуждается, см. ADR 0001
   ui/               UI-кит — пока пустой (export {})
   utils/            cn() и общие хелперы
   types/            общие TS-типы
   tailwind-config/  тема (theme.css) и токены холста/стикеров (tokens.ts)
+  typescript-config/ общие tsconfig (base, nextjs, nestjs, compiled-package, jit-package)
   email/ hooks/ i18n/ icons/   заготовки (.gitkeep)
 infra (docker-compose.yml)
   PostgreSQL 16  :5432
   Redis 7        :6379  — поднимается, приложением пока не используется
 ```
+
+## Сборка пакетов и tsconfig
+
+Схема — из гайда Turborepo по [TypeScript](https://turborepo.dev/docs/guides/tools/typescript) и
+[internal packages](https://turborepo.dev/docs/core-concepts/internal-packages).
+
+Пакет собирается, только если его импортирует `apps/api`: Node не исполняет TS-исходники.
+
+| Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
+| ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
+| `dto`, `utils`, `types`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
+| `ui`, `api`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
+
+- `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
+  найденные через `node_modules`, внешними: проверяет их, но не кладёт в `dist` приложения.
+- Web компилирует все `@packages/*` через `transpilePackages`.
+- Версия TypeScript одна на весь репозиторий — `catalog` в `pnpm-workspace.yaml`.
+
+### tsconfig
+
+Общие конфиги — пакет `@packages/typescript-config` (devDependency `workspace:*`). Turbo видит его как
+зависимость: правка конфига сбрасывает кэш `typecheck` у всех, кто его использует. Корневого `tsconfig.json` нет.
+
+| Файл                    | Для чего                    | Главное                                                                 |
+| ----------------------- | --------------------------- | ----------------------------------------------------------------------- |
+| `base.json`             | основа всех                 | `NodeNext`, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`, `types: []` |
+| `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
+| `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
+| `compiled-package.json` | `dto`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
+| `jit-package.json`      | `ui`, `api`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
+
+- `types: []` в base — как умолчание в TS 6: глобальные типы (`node`, `jest`) подключаются явно там, где нужны.
+- `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
+  семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
+  (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, без тестов).
+- `allowJs` и `incremental` в `nextjs.json` Next добавляет сам, если их нет.

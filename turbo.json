@@ -15,11 +15,14 @@
       "inputs": ["$TURBO_DEFAULT$"]
     },
     "lint:fsd": {
-      "inputs": ["src/**", "steiger.config.ts", "tsconfig.json", "$TURBO_ROOT$/tsconfig.base.json"],
+      "inputs": ["src/**", "steiger.config.ts", "tsconfig.json"],
       "outputs": []
     },
+    "topo": {
+      "dependsOn": ["^topo"]
+    },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["topo"],
       "outputs": []
     },
     "test": {

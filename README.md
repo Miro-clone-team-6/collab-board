@@ -22,7 +22,7 @@ cp apps/web/.env.example apps/web/.env.local
 pnpm infra:up      # PostgreSQL + Redis в Docker
 pnpm db:migrate    # миграции
 pnpm db:seed       # тестовые данные
-pnpm build         # собрать packages/* в dist — без этого web и api не найдут их
+pnpm build         # собрать dto, utils, types в dist — без этого web и api не найдут их
 pnpm dev           # web :3000, api :3001
 ```
 

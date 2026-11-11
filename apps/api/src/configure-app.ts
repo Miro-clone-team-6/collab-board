@@ -8,11 +8,8 @@ export function configureApp(app: INestApplication): void {
 
   app.setGlobalPrefix("api/v1");
 
-  app.use(
-    helmet({
-      contentSecurityPolicy: isProduction ? undefined : false, // Отключаем жесткий CSP в dev для работы скриптов Swagger UI
-    }),
-  );
+  // В dev CSP отключён, иначе не работают скрипты Swagger UI.
+  app.use(helmet(isProduction ? {} : { contentSecurityPolicy: false }));
 
   app.use(cookieParser());
 

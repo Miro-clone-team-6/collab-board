@@ -1,18 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@packages/typescript-config/nextjs.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "noEmit": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "noUncheckedSideEffectImports": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": ["./src/*"]
     }

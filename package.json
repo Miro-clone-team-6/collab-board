@@ -12,11 +12,9 @@
     "dev:api": "turbo dev --filter=api",
     "build:web": "turbo build --filter=web",
     "build:api": "turbo build --filter=api",
-    "build:ui": "turbo build --filter=@packages/ui",
     "build:dto": "turbo build --filter=@packages/dto",
     "build:types": "turbo build --filter=@packages/types",
     "build:utils": "turbo build --filter=@packages/utils",
-    "build:tailwind-config": "turbo build --filter=@packages/tailwind-config",
     "typecheck": "turbo typecheck",
     "lint": "biome check --no-errors-on-unmatched && turbo lint:fsd",
     "lint:fsd": "turbo lint:fsd",
@@ -44,6 +42,6 @@
     "lint-staged": "^15.3.0",
     "orval": "^8.47.0",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.3"
+    "typescript": "catalog:"
   }
 }

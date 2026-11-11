@@ -72,7 +72,7 @@ export async function customInstance<TResponse>(
     method: method || restOptions.method || "GET",
     credentials: "include",
     headers: fetchHeaders,
-    signal,
+    signal: signal ?? null,
   };
 
   if (data !== undefined && fetchInit.method !== "GET" && fetchInit.method !== "HEAD") {

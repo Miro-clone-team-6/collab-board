@@ -78,7 +78,7 @@ export class BoardsService {
    });
    export type CreateBoardDto = z.infer<typeof CreateBoardSchema>;
    ```
-2. Пакет собирается через `@rslib/core` в CommonJS (`dist/index.cjs`), что позволяет NestJS мгновенно импортировать типы без проблем с ESM.
+2. Пакет собирается `tsc` в CommonJS (`dist/index.js`) — NestJS загружает его обычным `require`.
 
 ---
 

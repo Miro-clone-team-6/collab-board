@@ -10,8 +10,9 @@
   слои `app`/`pages` называются `_app`/`_pages` (гайд FSD для Next.js).
 - `apps/api` — NestJS 11 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/api` — клиент API (Orval). **Генерация отложена и Orval убирается** — см. ADR 0001, не развивать.
-- `packages/dto` — Zod-схемы (Rslib, ESM + CJS). Роль пакета не решена — см. ADR 0001.
+- `packages/dto` — Zod-схемы (`tsc` → CommonJS). Роль пакета не решена — см. ADR 0001.
 - `packages/ui`, `utils`, `types`, `tailwind-config` — UI-кит, хелперы (`cn`), общие типы, токены и тема.
+- `packages/typescript-config` — общие tsconfig. Как устроены и какой пакет собирается — `docs/architecture.md`.
 
 Пустые заготовки (только `.gitkeep`): `apps/landing`, `apps/ui-docs`, `apps/telegram-bot`,
 `packages/email`, `hooks`, `i18n`, `icons`. Не ссылаться на них как на существующий код.

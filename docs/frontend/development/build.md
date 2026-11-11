@@ -33,14 +33,17 @@
 
 В файле `turbo.json` настроен граф задач:
 * `build`: сборка пакетов запускается с учетом зависимостей (`dependsOn: ["^build"]`).
-* `typecheck`: зависит от собранных общих пакетов (`dependsOn: ["^build"]`).
+* `typecheck`: `dependsOn: ["topo"]`, где `topo` — пустая задача с `dependsOn: ["^topo"]` (приём из гайда Turborepo).
+  Проверки идут параллельно, но кэш сбрасывается при изменении зависимостей. Сборка не нужна: `types` пакетов указывает на `src`.
 * `lint:fsd`: Steiger, без зависимостей; кэш по исходникам FSD и `tsconfig` — см. [fsd.md](../architecture/fsd.md#5-проверка-steiger).
 
 ```text
 web#build
-  ├── @packages/ui#build
   ├── @packages/dto#build
-  ├── @packages/api#build
-  └── @packages/tailwind-config#build
+  ├── @packages/utils#build
+  └── @packages/types#build
 ```
+
+`dto`, `utils`, `types` собирает `tsc` в CommonJS. `ui`, `api` и `tailwind-config` не собираются: `exports` указывает на `src/*.ts`, Next компилирует их
+через `transpilePackages`. Подробнее — [architecture.md](../../architecture.md).
 Turborepo автоматически кэширует результаты сборки на диске (`.turbo`), что обеспечивает мгновенные повторные прогоны команд (FULL TURBO).
