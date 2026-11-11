@@ -21,7 +21,6 @@
     "lint:fsd": "turbo lint:fsd",
     "lint:fix": "biome check --write --no-errors-on-unmatched",
     "format": "biome format --write --no-errors-on-unmatched",
-    "test": "turbo test",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
     "infra:logs": "docker compose logs -f",

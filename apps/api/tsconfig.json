@@ -1,8 +1,7 @@
 {
   "extends": "@packages/typescript-config/nestjs.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "types": ["node", "jest"]
+    "outDir": "dist"
   },
-  "include": ["src", "scripts", "prisma", "test"]
+  "include": ["src", "scripts", "prisma"]
 }

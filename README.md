@@ -40,7 +40,6 @@ pnpm typecheck           # типы во всех workspaces
 pnpm lint                # Biome + Steiger (FSD)
 pnpm lint:fix            # автоисправление Biome
 pnpm lint:fsd            # только Steiger
-pnpm test
 pnpm infra:down
 ```
 

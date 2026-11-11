@@ -23,10 +23,6 @@
       "dependsOn": ["topo"],
       "outputs": []
     },
-    "test": {
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["coverage/**"]
-    },
     "generate": {
       "cache": false
     },

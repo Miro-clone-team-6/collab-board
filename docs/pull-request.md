@@ -35,7 +35,6 @@ docs(repo): describe auth decision
 ```bash
 pnpm lint
 pnpm typecheck
-pnpm test
 pnpm build
 ```
 

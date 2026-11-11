@@ -8,7 +8,6 @@
     "postinstall": "prisma generate",
     "start": "nest start",
     "typecheck": "tsc --noEmit",
-    "test": "jest --passWithNoTests",
     "generate:openapi": "ts-node scripts/generate-openapi.ts",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
@@ -39,12 +38,9 @@
     "@packages/typescript-config": "workspace:*",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
     "@types/node": "catalog:",
-    "jest": "^29.7.0",
     "prisma": "6.4.0",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "catalog:"
   }

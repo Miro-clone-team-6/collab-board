@@ -56,8 +56,8 @@ infra (docker-compose.yml)
 | `compiled-package.json` | `dto`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
 | `jit-package.json`      | `ui`, `api`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
-- `types: []` в base — как умолчание в TS 6: глобальные типы (`node`, `jest`) подключаются явно там, где нужны.
+- `types: []` в base — как умолчание в TS 6: глобальные типы (например, `node`) подключаются явно там, где нужны.
 - `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
   семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
-  (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, без тестов).
+  (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
 - `allowJs` и `incremental` в `nextjs.json` Next добавляет сам, если их нет.
