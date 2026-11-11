@@ -17,23 +17,5 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7.4-alpine3.21
-    container_name: collab-redis
-    restart: unless-stopped
-    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\" --appendonly yes"]
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres-data:
-  redis-data:

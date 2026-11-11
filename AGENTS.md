@@ -20,7 +20,7 @@
 ## Команды
 
 ```bash
-pnpm infra:up          # docker: БД, Redis и т.п.
+pnpm infra:up          # docker: PostgreSQL
 pnpm dev:web / dev:api
 pnpm typecheck         # turbo, все workspaces
 pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)

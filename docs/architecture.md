@@ -23,7 +23,6 @@ packages/
   email/ hooks/ i18n/ icons/   заготовки (.gitkeep)
 infra (docker-compose.yml)
   PostgreSQL 16  :5432
-  Redis 7        :6379  — поднимается, приложением пока не используется
 ```
 
 ## Сборка пакетов и tsconfig
