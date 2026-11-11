@@ -71,6 +71,6 @@ queryClient.invalidateQueries({ queryKey: getHealthControllerCheckQueryKey() });
 ## Последствия
 
 - Убрать: `orval` из devDependencies, `orval.config.ts`, `packages/api/src/generated`, скрипты
-  `generate:client` / `codegen` / `codegen:check`, использование хука в `apps/web/src/app/page.tsx`.
+  `generate:client` / `codegen` / `codegen:check`, использование хука в `apps/web/src/_pages/home/ui/HomePage.tsx`.
 - `generate:api` (выгрузка `openapi.json`) и Swagger UI можно оставить — они от Orval не зависят.
 - Валидации входящих данных в API по-прежнему нет — решить отдельно.

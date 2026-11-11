@@ -12,7 +12,7 @@
 * **`@packages/tailwind-config`**:
   - `src/theme.css`: глобальные CSS-переменные темы (`--background`, `--foreground`, `--primary`, `--card`, `--border`, `--radius`). Поддерживает светлую и тёмную тему (`.dark`).
   - `src/tokens.ts`: специфичные для CollabBoard токены (холст, сетка, стикеры).
-* **`apps/web/src/app/globals.css`**: импортирует тему из `@packages/tailwind-config/theme.css` и директивы `@tailwind`.
+* **`apps/web/src/_app/globals.css`**: импортирует тему из `@packages/tailwind-config/theme.css` и директивы `@tailwind`.
 * **`apps/web/tailwind.config.ts`**: подключает пресет из `@packages/tailwind-config`.
 
 ---

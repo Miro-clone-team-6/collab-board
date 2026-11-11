@@ -1,24 +1,40 @@
 # 🌐 Next.js 15 App Router & React 19
 
-> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../../architecture.md).
+> **Статус:** ✅ Сверено с кодом 2026-11-11. Пример роута `board/[id]` условный — такого роута ещё нет.
 
-Веб-приложение `apps/web` построено на базе **Next.js 15 (App Router)** и **React 19**.
+`apps/web` — Next.js 15.1 (App Router) и React 19.
 
----
+## 1. Next.js и FSD
 
-## 1. Интеграция Next.js App Router и FSD
+Следуем [гайду FSD для Next.js](https://feature-sliced.design/docs/guides/tech/with-nextjs):
 
-В Next.js App Router директория `src/app` является файловым маршрутизатором. Чтобы подружить файловый роутинг с архитектурой FSD:
+```text
+apps/web/
+├── app/            # роутер Next.js: сейчас layout.tsx и page.tsx
+├── global.d.ts     # типы для импортов *.css, см. раздел 4
+└── src/            # только слои FSD, см. fsd.md
+    ├── _app/
+    ├── _pages/
+    └── widgets/ features/ entities/ shared/
+```
 
-1. **`src/app` содержит только роуты и глобальную обвязку:**
-   - `layout.tsx`, `page.tsx`, `loading.tsx`, `error.tsx`, `providers/`.
-2. **Файлы `page.tsx` должны быть максимально «тонкими»:**
-   - `page.tsx` только принимает параметры URL и рендерит готовую страницу из `src/pages/...` или композицию виджетов.
+1. **Корневой `app/` — только роутинг.** Next ищет `app/` в корне раньше, чем в `src/`, поэтому
+   `src/` целиком принадлежит FSD. Здесь же — `loading.tsx`, `error.tsx`, `not-found.tsx`, когда понадобятся.
+2. **Слои `app` и `pages` с префиксом `_`**, чтобы Next не принял их за App Router / Pages Router.
+3. **`page.tsx` — тонкие:** реэкспорт страницы из `src/_pages` или приём параметров URL. Сейчас:
+   ```tsx
+   // apps/web/app/page.tsx
+   export { HomePage as default } from "@/_pages/home";
+   ```
+4. **`middleware.ts` и `instrumentation.ts`** (когда появятся) — в корне `apps/web/`, рядом с `app/`.
+5. **Серверный код слайса** экспортируется из отдельного `index.server.ts`, иначе импорт слайса
+   из клиентского компонента ломает сборку.
 
-### Пример тонкого роута:
+Роут с параметрами (условный пример):
+
 ```tsx
-// apps/web/src/app/board/[id]/page.tsx
-import { BoardWorkspacePage } from "@/pages/board-workspace";
+// apps/web/app/board/[id]/page.tsx
+import { BoardWorkspacePage } from "@/_pages/board-workspace";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -30,53 +46,39 @@ export default async function Route({ params }: Props) {
 }
 ```
 
----
+## 2. Server vs Client Components
 
-## 2. Server Components vs Client Components
-
-В Next.js App Router все компоненты по умолчанию являются **Server Components (RSC)**.
-
-### Где ставить границу `'use client'`?
+По умолчанию компоненты App Router — **Server Components**.
 
 | Задача | Где выполняется |
 |---|---|
-| Начальная загрузка страницы, SEO-метатеги, layout | **Server Component** |
-| Интерактивный бесконечный холст (движение мыши, зум, клики) | **Client Component** (`'use client'`) |
-| React-хуки (`useState`, `useEffect`, `useRef`) | **Client Component** (`'use client'`) |
-| Клиентские библиотеки (Zustand, React Hook Form, TanStack Query) | **Client Component** (`'use client'`) |
+| Начальная загрузка страницы, метатеги, layout | **Server Component** |
+| Интерактивный холст (мышь, зум, клики) | **Client Component** (`"use client"`) |
+| Хуки React (`useState`, `useEffect`, `useRef`) | **Client Component** |
+| Клиентские библиотеки (TanStack Query; Zustand и React Hook Form — пока не установлены) | **Client Component** |
 
-> 💡 **Правило:** Директива `'use client'` добавляется на **минимально возможном листовом уровне** дерева компонентов, а не на всю страницу.
+`"use client"` ставится на **самом нижнем возможном уровне** дерева, а не на всю страницу.
 
----
+Сейчас это правило нарушает `HomePage`: заглушка целиком клиентская и ходит в API через
+`@packages/api`, который убирается ([ADR 0001](../../decisions/0001-api-contracts.md)). Подробнее —
+[fsd.md](./fsd.md#что-есть-сейчас).
 
-## 3. Проксирование API (Rewrites в `next.config.ts`)
+## 3. Проксирование API
 
-Чтобы клиентские запросы к бэкенду шли без проблем с CORS в локальной разработке и продакшене, в `apps/web/next.config.ts` настроены rewrites:
+[`apps/web/next.config.ts`](../../../apps/web/next.config.ts) переписывает `/api/*` на бэкенд
+(`NEXT_PUBLIC_API_URL`, по умолчанию `http://localhost:3001`), поэтому клиент ходит на свой origin и CORS не нужен.
 
-```typescript
-// apps/web/next.config.ts
-import type { NextConfig } from "next";
+Там же `transpilePackages` со всеми `@packages/*`, включая `@packages/api`, — уйдёт вместе с ним.
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  transpilePackages: [
-    "@packages/ui",
-    "@packages/dto",
-    "@packages/types",
-    "@packages/utils",
-    "@packages/api",
-    "@packages/tailwind-config",
-  ],
-  async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${apiUrl.replace(/\/+$/, "")}/api/:path*`,
-      },
-    ];
-  },
-};
+## 4. Импорт глобальных стилей и TypeScript
 
-export default nextConfig;
-```
+`app/layout.tsx` подключает стили импортом ради сайд-эффекта: `import "@/_app/globals.css"`.
+
+- В `tsconfig.json` включён `noUncheckedSideEffectImports`: TypeScript проверяет, что такие импорты
+  разрешаются. Это ловит опечатки в путях. В TS 6 флаг включён по умолчанию, явная настройка
+  выравнивает поведение с TS 5.9 из проекта.
+- Next типизирует только `*.module.css`, поэтому [`apps/web/global.d.ts`](../../../apps/web/global.d.ts)
+  объявляет `declare module "*.css"`. Без него — ошибка TS2882 / TS2307.
+- Редактор должен использовать TypeScript из проекта, а не встроенный: «TypeScript: Select TypeScript Version»
+  → «Use Workspace Version» (или `"typescript.tsdk": "node_modules/typescript/lib"`). Иначе редактор и
+  `pnpm typecheck` расходятся.

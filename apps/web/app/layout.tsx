@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { AppProviders } from "./providers/AppProviders";
-import "./globals.css";
+import { AppProviders } from "@/_app/providers/AppProviders";
+import "@/_app/globals.css";
 
 export const metadata: Metadata = {
   title: "CollabBoard — Интерактивная доска",

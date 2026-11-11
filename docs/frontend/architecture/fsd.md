@@ -1,82 +1,102 @@
 # 🏛 Feature-Sliced Design (FSD) в CollabBoard
 
-> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../../architecture.md).
+> **Статус:** ✅ Сверено с кодом 2026-11-11. Примеры слайсов (`board-canvas`, `add-sticky-note` и т. п.)
+> условные — показывают, куда класть код, а не то, что уже есть.
 
-Веб-приложение `apps/web` следует методологии архитектуры **Feature-Sliced Design (v2)**.  
-Официальная документация FSD: [https://feature-sliced.design](https://feature-sliced.design)
+`apps/web` следует [Feature-Sliced Design v2](https://feature-sliced.design) и
+[гайду FSD для Next.js](https://feature-sliced.design/docs/guides/tech/with-nextjs): роутер Next лежит в
+корне `apps/web/app/`, а слои `app` и `pages` в `src/` называются `_app` и `_pages`, чтобы Next не принимал
+их за App Router / Pages Router. Подробнее — [nextjs.md](./nextjs.md).
 
----
+## 1. Слои
 
-> ⚠️ **Известная проблема:** Next.js считает `src/pages/*` маршрутами Pages Router, поэтому FSD-слой
-> `pages` с ним конфликтует. Пока в `src/pages/` только `.gitkeep`. **Не создавать там файлы** до исправления
-> (варианты: переименовать слой, например в `views/`, или вынести роуты в корневой `app/`).
-
-## 1. Иерархия слоев
-
-Слои строго упорядочены по уровню абстракции (сверху вниз):
+Сверху вниз по уровню абстракции:
 
 ```text
-apps/web/src/
-├── app/         # 1. Инициализация: роутинг Next.js, провайдеры, стили
-├── pages/       # 2. Страницы: композиция виджетов в готовые экраны
-├── widgets/     # 3. Виджеты: крупные самостоятельные UI-блоки (BoardCanvas, Toolbar, Header)
-├── features/    # 4. Фичи: действия пользователя (AddStickyNote, ExportBoard, ZoomControls)
-├── entities/    # 5. Сущности: доменные модели (Board, CanvasElement, User, Cursor)
-└── shared/      # 6. Shared: утилиты, UI-примитивы, базовые хуки, конфиги
+apps/web/
+├── app/             # роутер Next.js (не слой FSD): тонкие реэкспорты из src/_pages
+└── src/
+    ├── _app/        # 1. Инициализация: провайдеры, глобальные стили
+    ├── _pages/      # 2. Страницы: композиция виджетов в готовые экраны
+    ├── widgets/     # 3. Крупные самостоятельные UI-блоки
+    ├── features/    # 4. Действия пользователя
+    ├── entities/    # 5. Доменные сущности
+    └── shared/      # 6. Код вне домена
+        ├── api/     #    клиент и запросы к бэкенду
+        ├── config/  #    конфигурация, env
+        ├── lib/     #    утилиты и хуки общего назначения
+        └── ui/      #    UI-примитивы, специфичные для apps/web
 ```
 
----
+Сегменты называются по назначению (`ui`, `api`, `model`, `lib`, `config`), а не по виду кода:
+сегментов `hooks`, `types`, `components` нет. Хуки живут в `lib` или `model`, типы — рядом с кодом,
+который их использует.
 
-## 2. Матрица слоев и ответственности для CollabBoard
+### Что есть сейчас
 
-| Слой | Ответственность | Примеры в CollabBoard | Чего НЕ должно быть |
+| Путь | Содержимое |
+|---|---|
+| `src/_app/providers/` | `AppProviders` (next-themes + TanStack Query), `QueryProvider` |
+| `src/_app/globals.css` | Тема из `@packages/tailwind-config` и директивы Tailwind |
+| `src/_pages/home/` | `HomePage` — базовый пример страницы, см. ниже |
+| `widgets/`, `features/`, `entities/`, `shared/*` | Пустые (`.gitkeep`) |
+
+`HomePage` — заглушка: вся страница помечена `"use client"` и напрямую вызывает
+`useHealthControllerCheck` из `@packages/api`. Оба момента противоречат правилам ниже и
+[nextjs.md](./nextjs.md): `@packages/api` убирается ([ADR 0001](../../decisions/0001-api-contracts.md)),
+а `"use client"` должен стоять на листовом компоненте. Не копировать как образец.
+
+## 2. Ответственность слоёв
+
+| Слой | Ответственность | Пример (условный) | Чего НЕ должно быть |
 |---|---|---|---|
-| **`app/`** | Роуты Next.js App Router, глобальные провайдеры, стили | `app/board/[id]/page.tsx`, `providers/QueryProvider.tsx` | Бизнес-логики холста |
-| **`pages/`** | Композиция страницы из виджетов | `BoardWorkspacePage`, `DashboardPage` | Прямых сетевых вызовов `fetch` |
-| **`widgets/`** | Крупные составные UI-блоки | `BoardCanvas` (холст), `BoardToolbar` (панель инструментов), `BoardHeader` | Дублирования логики фич |
-| **`features/`** | Пользовательские интерактивные сценарии («Что делает?») | `add-sticky-note`, `export-board`, `invite-member`, `change-color` | Знания о других фичах |
-| **`entities/`** | Бизнес-сущности («С чем работает?») | `board` (модель доски), `canvas-element` (фигура), `cursor` (курсор) | Интерактивных действий и форм |
+| **`_app/`** | Глобальные провайдеры, стили | `providers/QueryProvider.tsx` | Роутов Next.js, бизнес-логики |
+| **`_pages/`** | Композиция экрана из виджетов | `_pages/board-workspace` | Прямых сетевых вызовов |
+| **`widgets/`** | Крупные составные UI-блоки | `board-canvas`, `board-toolbar` | Дублирования логики фич |
+| **`features/`** | Действия пользователя («что делает?») | `add-sticky-note`, `export-board` | Знания о других фичах |
+| **`entities/`** | Доменные сущности («с чем работает?») | `board`, `canvas-element`, `cursor` | Интерактивных действий и форм |
 | **`shared/`** | Переиспользуемый код вне домена | `shared/ui/button`, `shared/lib/canvas-math.ts` | Знания о Board или User |
 
----
+## 3. Направление зависимостей
 
-## 3. Правило направления зависимостей
-
-> **Главное правило:** Модуль может импортировать только то, что находится **строго ниже** него по слоям.  
-> Импорты на одном слое (Cross-imports между слайсами) **запрещены**.
+Модуль импортирует только то, что **строго ниже** по слоям. Импорты между слайсами одного слоя запрещены.
 
 ```text
-app ──► pages ──► widgets ──► features ──► entities ──► shared
+_app ──► _pages ──► widgets ──► features ──► entities ──► shared
 ```
 
-* ✅ `widgets/board-canvas` может импортировать `features/add-sticky-note` и `entities/canvas-element`.
-* ❌ `entities/board` НЕ МОЖЕТ импортировать `features/create-board`.
-* ❌ `features/add-sticky-note` НЕ МОЖЕТ напрямую импортировать `features/export-board`. Если есть общая логика, она выносится в `entities` или `shared`.
+* ✅ `widgets/board-canvas` импортирует `features/add-sticky-note` и `entities/canvas-element`.
+* ❌ `entities/board` импортирует `features/create-board`.
+* ❌ `features/add-sticky-note` импортирует `features/export-board`. Общая логика выносится в `entities` или `shared`.
 
----
+> ⚠️ Пока не проверяется автоматически — держится на ревью. Линтер [Steiger](https://github.com/feature-sliced/steiger)
+> будет подключён отдельно.
 
-## 4. Структура слайса и Public API
+## 4. Слайс и Public API
 
-Каждый слайс обязан предоставлять публичный интерфейс через корневой `index.ts`:
+Каждый слайс отдаёт публичный интерфейс через корневой `index.ts`:
 
 ```text
 features/add-sticky-note/
-├── ui/              # Компоненты UI (AddStickyButton.tsx, StickyColorPicker.tsx)
-├── model/           # Хуки, стейт, типы (use-add-sticky.ts)
+├── ui/              # AddStickyButton.tsx
+├── model/           # use-add-sticky.ts
 └── index.ts         # Public API
 ```
 
-### Пример Public API:
 ```ts
 // features/add-sticky-note/index.ts
 export { AddStickyButton } from "./ui/AddStickyButton";
 export { useAddSticky } from "./model/use-add-sticky";
 ```
 
+Импорт — только через Public API и только через алиас `@/` (других алиасов нет):
+
 ```tsx
-// ❌ ЗАПРЕЩЕНО (глубокий импорт во внутренности слайса)
+// ❌ глубокий импорт во внутренности слайса
 import { AddStickyButton } from "@/features/add-sticky-note/ui/AddStickyButton";
 
-// ✅ РАЗРЕШЕНО (импорт через Public API)
+// ✅ через Public API
 import { AddStickyButton } from "@/features/add-sticky-note";
 ```
+
+Серверный код слайса экспортируется из отдельного `index.server.ts` — см. [nextjs.md](./nextjs.md).

@@ -2,7 +2,7 @@
 
 import { useHealthControllerCheck } from "@packages/api";
 
-export default function HomePage() {
+export function HomePage() {
   const { data, isLoading, error } = useHealthControllerCheck();
 
   return (
