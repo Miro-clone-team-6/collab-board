@@ -18,7 +18,7 @@
 │       └── Добавить схему и DTO в переиспользуемый пакет ──► packages/dto/src/
 │
 ├── Работа с базой данных (PostgreSQL)?
-│   ├── Модели данных и связи ──► apps/api/prisma/schema.prisma
+│   ├── Модели данных и связи ──► apps/api/prisma/models/*.prisma
 │   └── Сервис доступа к БД ──► apps/api/src/prisma/prisma.service.ts
 │
 ├── Работа с кэшем, токенами или WebSockets Pub/Sub (Redis)?

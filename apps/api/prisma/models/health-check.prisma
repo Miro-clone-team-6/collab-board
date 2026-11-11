@@ -1,0 +1,8 @@
+model HealthCheck {
+  id        String   @id @default(uuid())
+  status    String   @default("ok")
+  note      String?
+  checkedAt DateTime @default(now())
+
+  @@map("health_checks")
+}

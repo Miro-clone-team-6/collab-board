@@ -4,40 +4,24 @@
 
 ---
 
-## 1. Схема данных (`apps/api/prisma/schema.prisma`)
+## 1. Схема данных (`apps/api/prisma/`)
 
-Файл схемы располагается в `apps/api/prisma/schema.prisma`:
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
-}
-
-model HealthCheck {
-  id        String   @id @default(uuid())
-  status    String   @default("ok")
-  note      String?
-  checkedAt DateTime @default(now())
-
-  @@map("health_checks")
-}
+```text
+prisma/
+├── schema.prisma          # только datasource и generator
+├── models/
+│   ├── user.prisma
+│   └── health-check.prisma
+└── migrations/
+    └── 20261110105600_init/
+        ├── migration.sql
+        └── seed.ts
 ```
+
+Одна логическая модель или группа моделей агрегата — один файл в `models/`.
+Это модели хранения, а не обязательно доменные сущности.
+В Prisma 6.4 включён `prismaSchemaFolder`, каталог схемы задан через
+`prisma.schema` в `apps/api/package.json`.
 
 ### Соглашения по именованию моделей:
 * **Модели Prisma:** PascalCase в единственном числе (`User`, `Board`, `StickyNote`).
@@ -51,7 +35,7 @@ model HealthCheck {
 Все команды запускаются через `pnpm` из корня проекта:
 
 ```bash
-# Создание новой миграции при изменении schema.prisma (интерактивный режим для dev)
+# Создание новой миграции при изменении файлов схемы (интерактивный режим для dev)
 pnpm db:migrate
 
 # Генерация TypeScript клиента Prisma Client
@@ -63,6 +47,29 @@ pnpm db:seed
 # Применение готовых миграций в production / CI (без генерации новых)
 pnpm db:migrate:deploy
 ```
+
+---
+
+### Сиды миграций
+
+Для миграции с начальными данными создаётся `seed.ts` рядом с `migration.sql`.
+Экспорт: `seed(tx: Prisma.TransactionClient): Promise<void>`.
+Если данных нет, файл не нужен.
+
+`pnpm db:seed` запускает `scripts/seed.ts`: проверяет, что миграции применены,
+выполняет сиды по порядку имён в общей транзакции с блокировкой от параллельного
+запуска. Ошибка откатывает все изменения. Истории сидов нет: каждый запуск
+повторяет все сиды, поэтому они обязаны быть идемпотентными и не перезаписывать
+изменённые пользователем данные. Используйте стабильные ID и `ON CONFLICT`.
+
+Параметризованный SQL через `tx` не зависит от будущих моделей Prisma Client.
+При переименовании/удалении таблиц и колонок проверяйте совместимость всей цепочки
+сидов с актуальной БД. Это повторяемое наполнение, а не одноразовые data migrations:
+обязательные преобразования данных помещайте в `migration.sql`.
+
+`migrate deploy` не запускает сиды; `pnpm db:seed` вызывается отдельно.
+Prisma может вызвать настроенный seed после сброса базы в dev.
+Начальный сид содержит тестового пользователя и предназначен для локальной разработки.
 
 ---
 

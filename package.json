@@ -29,9 +29,8 @@
     "db:migrate:deploy": "pnpm --filter api db:migrate:deploy",
     "db:generate": "pnpm --filter api db:generate",
     "db:seed": "pnpm --filter api db:seed",
-    "generate:api": "pnpm --filter api generate:openapi",
     "generate:client": "orval --config ./orval.config.ts",
-    "codegen": "pnpm run generate:api && pnpm run generate:client",
+    "codegen": "pnpm run generate:client",
     "codegen:check": "pnpm run generate:client && git diff --exit-code -- packages/api/src/generated",
     "prepare": "husky"
   },

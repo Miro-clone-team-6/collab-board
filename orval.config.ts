@@ -2,7 +2,7 @@ import { defineConfig } from "orval";
 
 export default defineConfig({
   apiPackage: {
-    input: "./apps/api/openapi/openapi.json",
+    input: process.env.OPENAPI_URL ?? "http://localhost:3001/docs-json",
     output: {
       mode: "tags-split",
       target: "./packages/api/src/generated/endpoints",
