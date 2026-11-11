@@ -6,7 +6,7 @@
 
 Рабочий код:
 
-- `apps/web` — Next.js 15 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`;
+- `apps/web` — Next.js 16 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`;
   слои `app`/`pages` называются `_app`/`_pages` (гайд FSD для Next.js).
 - `apps/api` — NestJS 11 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/api` — клиент API (Orval). **Генерация отложена и Orval убирается** — см. ADR 0001, не развивать.

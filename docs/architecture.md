@@ -7,7 +7,7 @@
 
 ```text
 apps/
-  web/          Next.js 15 (App Router, React 19), роуты в app/, FSD в src/  → :3000
+  web/          Next.js 16 (App Router, React 19), роуты в app/, FSD в src/  → :3000
   api/          NestJS 11 + Prisma (PostgreSQL), Swagger, /api/v1      → :3001
   landing/      заготовка (.gitkeep)
   ui-docs/      заготовка под Storybook (.gitkeep)

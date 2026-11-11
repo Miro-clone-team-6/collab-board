@@ -38,7 +38,7 @@
 ### 1. Архитектура и каркас приложения
 
 * **[Feature-Sliced Design (FSD)](./architecture/fsd.md)** — слои архитектуры, иерархия абстракций, правила импортов и Public API.
-* **[Next.js 15 App Router & React 19](./architecture/nextjs.md)** — тонкие роуты, Server vs Client Components, rewrites к API.
+* **[Next.js 16 App Router & React 19](./architecture/nextjs.md)** — тонкие роуты, Server vs Client Components, rewrites к API.
 
 ### 2. Данные и состояние
 

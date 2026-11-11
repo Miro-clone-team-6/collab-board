@@ -1,8 +1,8 @@
-# 🌐 Next.js 15 App Router & React 19
+# 🌐 Next.js 16 App Router & React 19
 
 > **Статус:** ✅ Сверено с кодом 2026-11-11. Пример роута `board/[id]` условный — такого роута ещё нет.
 
-`apps/web` — Next.js 15.1 (App Router) и React 19.
+`apps/web` — Next.js 16.4 (App Router, Turbopack в `dev` и `build`) и React 19.3.
 
 ## 1. Next.js и FSD
 
@@ -11,7 +11,6 @@
 ```text
 apps/web/
 ├── app/            # роутер Next.js: сейчас layout.tsx и page.tsx
-├── global.d.ts     # типы для импортов *.css, см. раздел 4
 └── src/            # только слои FSD, см. fsd.md
     ├── _app/
     ├── _pages/
@@ -77,14 +76,12 @@ export default async function Route({ params }: Props) {
 - В `tsconfig.json` включён `noUncheckedSideEffectImports`: TypeScript проверяет, что импорты ради
   сайд-эффекта разрешаются в исходник TS. Ловит опечатки вроде `import "server-onyl"` (TS2307).
   В TS 6 флаг включён по умолчанию, явная настройка выравнивает поведение с TS 5.9 из проекта.
-- `.css` для TypeScript не исходник, даже если файл существует. Next 15 типизирует только `*.module.css`,
-  поэтому [`apps/web/global.d.ts`](../../../apps/web/global.d.ts) объявляет `declare module "*.css"` —
-  решение из [документации TS](https://www.typescriptlang.org/tsconfig/#noUncheckedSideEffectImports).
-  Без него — ошибка TS2882 / TS2307.
+- `.css` для TypeScript не исходник, даже если файл существует. Next (с 16.2) объявляет
+  `declare module '*.css' {}` в `next/types/global.d.ts` — решение из
+  [документации TS](https://www.typescriptlang.org/tsconfig/#noUncheckedSideEffectImports).
+  Типы приходят через `next-env.d.ts`, своего объявления в проекте нет.
 - Объявление разрешает любой путь `*.css`, поэтому опечатки в путях к CSS TypeScript **не ловит**.
   Их ловит сборщик Next: `next dev` / `next build` падают с «Module not found».
-- Next с 16.2 сам объявляет `declare module '*.css' {}` в `next/types/global.d.ts`. После обновления
-  до 16.2+ `apps/web/global.d.ts` удалить.
 - Редактор должен использовать TypeScript из проекта, а не встроенный: «TypeScript: Select TypeScript Version»
   → «Use Workspace Version» (или `"typescript.tsdk": "node_modules/typescript/lib"`). Иначе редактор и
   `pnpm typecheck` расходятся.
