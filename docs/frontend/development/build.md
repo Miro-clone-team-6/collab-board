@@ -22,9 +22,6 @@
 | **Только правила FSD (Steiger)** | `pnpm lint:fsd`, см. [fsd.md](../architecture/fsd.md#5-проверка-steiger) |
 | **Автоисправление Biome** | `pnpm lint:fix` |
 | **Форматирование кода** | `pnpm format` |
-| **Генерация клиента из запущенного API** | `pnpm codegen` |
-| **Генерация только клиента Orval** | `pnpm generate:client` |
-| **Проверка синхронизации клиента в CI** | `pnpm codegen:check` |
 
 ---
 
@@ -39,14 +36,14 @@
 
 ```text
 web#build
-  ├── @packages/dto#build
+  ├── @packages/contracts#build
   ├── @packages/utils#build
   └── @packages/types#build
 ```
 
-`dto`, `utils`, `types` собирает `tsc` в CommonJS. `ui`, `api` и `tailwind-config` не собираются: `exports` указывает на `src/*.ts`, Next компилирует их
+`contracts`, `utils`, `types` собирает `tsc` в CommonJS. `ui` и `tailwind-config` не собираются: `exports` указывает на `src/*.ts`, Next компилирует их
 через `transpilePackages`. Подробнее — [architecture.md](../../architecture.md).
 Turborepo автоматически кэширует результаты сборки на диске (`.turbo`), что обеспечивает мгновенные повторные прогоны команд (FULL TURBO).
 
-Генератор читает OpenAPI с `http://localhost:3001/docs-json`; API должен быть запущен
-в dev-режиме. Другой адрес задаётся через `OPENAPI_URL`. Файлы спецификации не сохраняются.
+Контракты импортируются из `@packages/contracts`; генерации клиента нет.
+Решение — [ADR 0002](../../decisions/0002-shared-contracts.md).

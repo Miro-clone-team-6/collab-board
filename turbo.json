@@ -29,9 +29,6 @@
     },
     "generate": {
       "cache": false
-    },
-    "codegen": {
-      "cache": false
     }
   }
 }

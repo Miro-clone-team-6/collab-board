@@ -2,6 +2,7 @@ import type { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import { cleanupOpenApiDoc } from "nestjs-zod";
 
 export function configureApp(app: INestApplication): void {
   const isProduction = process.env.NODE_ENV === "production";
@@ -37,7 +38,7 @@ export function configureApp(app: INestApplication): void {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("docs", app, document);
+    SwaggerModule.setup("docs", app, cleanupOpenApiDoc(document));
   }
 
   app.enableShutdownHooks();

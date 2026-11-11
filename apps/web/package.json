@@ -12,8 +12,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@packages/api": "workspace:*",
-    "@packages/dto": "workspace:*",
+    "@packages/contracts": "workspace:*",
     "@packages/tailwind-config": "workspace:*",
     "@packages/types": "workspace:*",
     "@packages/ui": "workspace:*",

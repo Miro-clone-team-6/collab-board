@@ -49,14 +49,14 @@ apps/web/
 | `src/shared/ui/button/` | `Button` |
 | `src/shared/lib/date/` | `formatDate` |
 | `src/shared/config/` | `routes` |
-| `src/shared/api/` | Пустой (`.gitkeep`) |
+| `src/shared/api/` | `getHealth`, проверка ответа общей Zod-схемой |
 
 Слайсы — простой каркас для проверки связей между слоями: данные — моки, API не вызывается.
 
 `HomePage` — заглушка: вся страница помечена `"use client"` и напрямую вызывает
-`useHealthControllerCheck` из `@packages/api`. Оба момента противоречат правилам ниже и
-[nextjs.md](./nextjs.md): `@packages/api` убирается ([ADR 0001](../../decisions/0001-api-contracts.md)),
-а `"use client"` должен стоять на листовом компоненте. Не копировать как образец.
+`useQuery` с `getHealth` из `shared/api`. Общий контракт — в `@packages/contracts`
+([ADR 0002](../../decisions/0002-shared-contracts.md)). `"use client"` должен стоять
+на листовом компоненте; текущую страницу не копировать как образец.
 
 ## 2. Ответственность слоёв
 
