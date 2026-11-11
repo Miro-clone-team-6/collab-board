@@ -14,8 +14,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.0.1"
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
     "@packages/typescript-config": "workspace:*",
