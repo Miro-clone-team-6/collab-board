@@ -8,11 +8,11 @@
     "postinstall": "prisma generate",
     "start": "nest start",
     "typecheck": "tsc --noEmit",
-    "generate:openapi": "ts-node scripts/generate-openapi.ts",
+
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
-    "db:seed": "ts-node prisma/seed.ts"
+    "db:seed": "prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.9",
@@ -20,16 +20,17 @@
     "@nestjs/core": "^11.0.9",
     "@nestjs/platform-express": "^11.0.9",
     "@nestjs/swagger": "^11.0.3",
-    "@packages/dto": "workspace:^",
+    "@packages/contracts": "workspace:^",
     "@packages/types": "workspace:^",
     "@packages/utils": "workspace:^",
     "@prisma/client": "^6.4.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.10",
     "helmet": "^8.0.0",
+    "nestjs-zod": "5.6.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "yaml": "^2.9.1"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.2",
@@ -43,5 +44,9 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
     "typescript": "catalog:"
+  },
+  "prisma": {
+    "schema": "prisma/schema",
+    "seed": "ts-node prisma/seeds/index.ts"
   }
 }

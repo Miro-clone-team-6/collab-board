@@ -1,14 +1,16 @@
-import { Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import { Inject, Injectable, type OnModuleDestroy, type OnModuleInit } from "@nestjs/common";
+import type { ConfigType } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
+import { databaseConfig } from "../config/database.config";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor(@Inject(databaseConfig.KEY) database: ConfigType<typeof databaseConfig>) {
+    super({ datasourceUrl: database.url });
+  }
+
   async onModuleInit(): Promise<void> {
-    try {
-      await this.$connect();
-    } catch {
-      // Allow app to initialize and run headless tools (like OpenAPI generation) when DB is offline
-    }
+    await this.$connect();
   }
 
   async onModuleDestroy(): Promise<void> {

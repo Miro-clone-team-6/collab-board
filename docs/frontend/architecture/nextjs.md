@@ -59,7 +59,7 @@ export default async function Route({ params }: Props) {
 `"use client"` ставится на **самом нижнем возможном уровне** дерева, а не на всю страницу.
 
 Сейчас это правило нарушает `HomePage`: заглушка целиком клиентская и ходит в API через
-`@packages/api`, который убирается ([ADR 0001](../../decisions/0001-api-contracts.md)). Подробнее —
+`shared/api/get-health.ts` с общим контрактом ([ADR 0002](../../decisions/0002-shared-contracts.md)). Подробнее —
 [fsd.md](./fsd.md#что-есть-сейчас).
 
 ## 3. Проксирование API
@@ -67,7 +67,7 @@ export default async function Route({ params }: Props) {
 [`apps/web/next.config.ts`](../../../apps/web/next.config.ts) переписывает `/api/*` на бэкенд
 (`NEXT_PUBLIC_API_URL`, по умолчанию `http://localhost:3001`), поэтому клиент ходит на свой origin и CORS не нужен.
 
-Там же `transpilePackages` со всеми `@packages/*`, включая `@packages/api`, — уйдёт вместе с ним.
+Там же `transpilePackages` для общих пакетов, включая `@packages/contracts`.
 
 ## 4. Импорт глобальных стилей и TypeScript
 

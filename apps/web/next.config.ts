@@ -6,10 +6,9 @@ const nextConfig: NextConfig = {
   agentRules: false,
   transpilePackages: [
     "@packages/ui",
-    "@packages/dto",
+    "@packages/contracts",
     "@packages/types",
     "@packages/utils",
-    "@packages/api",
     "@packages/tailwind-config",
   ],
   async rewrites() {

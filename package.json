@@ -12,7 +12,6 @@
     "dev:api": "turbo dev --filter=api",
     "build:web": "turbo build --filter=web",
     "build:api": "turbo build --filter=api",
-    "build:dto": "turbo build --filter=@packages/dto",
     "build:types": "turbo build --filter=@packages/types",
     "build:utils": "turbo build --filter=@packages/utils",
     "typecheck": "turbo typecheck",
@@ -28,11 +27,8 @@
     "db:migrate:deploy": "pnpm --filter api db:migrate:deploy",
     "db:generate": "pnpm --filter api db:generate",
     "db:seed": "pnpm --filter api db:seed",
-    "generate:api": "pnpm --filter api generate:openapi",
-    "generate:client": "orval --config ./orval.config.ts",
-    "codegen": "pnpm run generate:api && pnpm run generate:client",
-    "codegen:check": "pnpm run generate:client && git diff --exit-code -- packages/api/src/generated",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:contracts": "turbo build --filter=@packages/contracts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.2",
@@ -40,7 +36,6 @@
     "@commitlint/config-conventional": "^19.6.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
-    "orval": "^8.47.0",
     "turbo": "^2.3.3",
     "typescript": "catalog:"
   }

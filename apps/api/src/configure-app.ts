@@ -1,10 +1,13 @@
 import type { INestApplication } from "@nestjs/common";
+import type { ConfigType } from "@nestjs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import { cleanupOpenApiDoc } from "nestjs-zod";
+import { httpConfig } from "./config/http.config";
 
 export function configureApp(app: INestApplication): void {
-  const isProduction = process.env.NODE_ENV === "production";
+  const { isProduction, allowedOrigins } = app.get<ConfigType<typeof httpConfig>>(httpConfig.KEY);
 
   app.setGlobalPrefix("api/v1");
 
@@ -13,18 +16,8 @@ export function configureApp(app: INestApplication): void {
 
   app.use(cookieParser());
 
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim())
-    : [];
-
   app.enableCors({
-    origin: [
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      process.env.FRONTEND_URL || "",
-      process.env.NEXT_PUBLIC_APP_URL || "",
-      ...allowedOrigins,
-    ].filter(Boolean),
+    origin: allowedOrigins,
     credentials: true,
   });
 
@@ -37,7 +30,7 @@ export function configureApp(app: INestApplication): void {
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup("docs", app, document);
+    SwaggerModule.setup("docs", app, cleanupOpenApiDoc(document));
   }
 
   app.enableShutdownHooks();

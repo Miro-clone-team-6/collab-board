@@ -13,8 +13,7 @@ apps/
   ui-docs/      заготовка под Storybook (.gitkeep)
   telegram-bot/ заготовка (.gitkeep)
 packages/
-  api/              клиент API от Orval — убирается (ADR 0001 ⏸)
-  dto/              Zod-схемы — роль обсуждается, см. ADR 0001
+  contracts/        общие Zod-схемы и TS-типы HTTP-контрактов (ADR 0002)
   ui/               UI-кит — пока пустой (export {})
   utils/            cn() и общие хелперы
   types/            общие TS-типы
@@ -23,7 +22,6 @@ packages/
   email/ hooks/ i18n/ icons/   заготовки (.gitkeep)
 infra (docker-compose.yml)
   PostgreSQL 16  :5432
-  Redis 7        :6379  — поднимается, приложением пока не используется
 ```
 
 ## Сборка пакетов и tsconfig
@@ -35,8 +33,8 @@ infra (docker-compose.yml)
 
 | Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
 | ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
-| `dto`, `utils`, `types`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
-| `ui`, `api`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
+| `contracts`, `utils`, `types`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
+| `ui`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
 
 - `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
   найденные через `node_modules`, внешними: проверяет их, но не кладёт в `dist` приложения.
@@ -53,8 +51,8 @@ infra (docker-compose.yml)
 | `base.json`             | основа всех                 | `NodeNext`, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`, `types: []` |
 | `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
 | `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
-| `compiled-package.json` | `dto`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
-| `jit-package.json`      | `ui`, `api`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
+| `compiled-package.json` | `contracts`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
+| `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
 - `types: []` в base — как умолчание в TS 6: глобальные типы (например, `node`) подключаются явно там, где нужны.
 - `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется

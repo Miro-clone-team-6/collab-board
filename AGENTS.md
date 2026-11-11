@@ -9,8 +9,8 @@
 - `apps/web` — Next.js 16 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`;
   слои `app`/`pages` называются `_app`/`_pages` (гайд FSD для Next.js).
 - `apps/api` — NestJS 11 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
-- `packages/api` — клиент API (Orval). **Генерация отложена и Orval убирается** — см. ADR 0001, не развивать.
-- `packages/dto` — Zod-схемы (`tsc` → CommonJS). Роль пакета не решена — см. ADR 0001.
+- `packages/contracts` — общие Zod-схемы HTTP-запросов/ответов и выведенные TS-типы.
+  Без зависимостей от Nest, Prisma и React; см. ADR 0002.
 - `packages/ui`, `utils`, `types`, `tailwind-config` — UI-кит, хелперы (`cn`), общие типы, токены и тема.
 - `packages/typescript-config` — общие tsconfig. Как устроены и какой пакет собирается — `docs/architecture.md`.
 
@@ -20,7 +20,7 @@
 ## Команды
 
 ```bash
-pnpm infra:up          # docker: БД, Redis и т.п.
+pnpm infra:up          # docker: PostgreSQL
 pnpm dev:web / dev:api
 pnpm typecheck         # turbo, все workspaces
 pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)

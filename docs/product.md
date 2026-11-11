@@ -127,7 +127,7 @@ User ─┬─< WorkspaceMember >── Workspace ──< Board ──< Element
 |---|---|
 | Next.js, TypeScript, TanStack Query | ✅ есть |
 | Zustand, React Hook Form + Zod, shadcn | ⬜ нет, нет ADR |
-| Socket.IO, Redis (multi-instance) | ⬜ Redis в Docker, кода нет; нет ADR |
+| Socket.IO, Redis (multi-instance) | ⬜ Не реализовано; нет ADR |
 | Библиотека холста — осознанный выбор, прототип до основной разработки | ⬜ нет ADR |
 | NestJS, PostgreSQL, Prisma, Swagger | ✅ есть |
 | BullMQ, S3, OpenAI | ⬜ нет |

@@ -1,15 +1,19 @@
 "use client";
 
-import { useHealthControllerCheck } from "@packages/api";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { getBoards } from "@/entities/board";
 import { getCurrentUser } from "@/entities/user";
+import { getHealth } from "@/shared/api/get-health";
 import { routes } from "@/shared/config/routes";
 import { BoardList } from "@/widgets/board-list";
 import { Header } from "@/widgets/header";
 
 export function HomePage() {
-  const { data, isLoading, error } = useHealthControllerCheck();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["health"],
+    queryFn: ({ signal }) => getHealth(signal),
+  });
   const user = getCurrentUser();
   const recentBoards = getBoards().slice(0, 2);
 

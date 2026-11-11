@@ -1,9 +1,9 @@
 # 0001. Генерация API-клиента: OpenAPI → Orval → TanStack Query
 
-- **Статус:** ⏸ Отложено
+- **Статус:** ♻️ Заменено [ADR 0002](./0002-shared-contracts.md)
 - **Дата:** 2026-11-11
 
-> Orval убирается из проекта. Документ сохранён как описание подхода на случай, если к нему вернёмся.
+> Orval и сгенерированный клиент удалены. Ниже — историческое описание подхода.
 
 ## Контекст
 
@@ -72,5 +72,6 @@ queryClient.invalidateQueries({ queryKey: getHealthControllerCheckQueryKey() });
 
 - Убрать: `orval` из devDependencies, `orval.config.ts`, `packages/api/src/generated`, скрипты
   `generate:client` / `codegen` / `codegen:check`, использование хука в `apps/web/src/_pages/home/ui/HomePage.tsx`.
-- `generate:api` (выгрузка `openapi.json`) и Swagger UI можно оставить — они от Orval не зависят.
+- Выгрузка OpenAPI в файлы удалена. Swagger UI и `/docs-json` остаются;
+  сохранившийся генератор клиента читает `/docs-json` запущенного API (`OPENAPI_URL`).
 - Валидации входящих данных в API по-прежнему нет — решить отдельно.
