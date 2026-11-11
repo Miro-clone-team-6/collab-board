@@ -18,18 +18,12 @@ catalogs:
     '@types/react-dom':
       specifier: ^19.0.3
       version: 19.3.0
-    clsx:
-      specifier: ^2.1.1
-      version: 2.1.1
     react:
       specifier: 19.0.0
       version: 19.0.0
     react-dom:
       specifier: 19.0.0
       version: 19.0.0
-    tailwind-merge:
-      specifier: ^3.0.1
-      version: 3.7.0
     typescript:
       specifier: 5.9.3
       version: 5.9.3
@@ -177,9 +171,6 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.107.1(@types/react@19.3.0)(react@19.0.0)
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.0.0)
@@ -195,9 +186,6 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.0.0(react@19.0.0)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.7.0
     devDependencies:
       '@feature-sliced/steiger-plugin':
         specifier: 0.8.2
@@ -312,10 +300,10 @@ importers:
   packages/utils:
     dependencies:
       clsx:
-        specifier: 'catalog:'
+        specifier: ^2.1.1
         version: 2.1.1
       tailwind-merge:
-        specifier: 'catalog:'
+        specifier: ^3.0.1
         version: 3.7.0
     devDependencies:
       '@packages/typescript-config':
