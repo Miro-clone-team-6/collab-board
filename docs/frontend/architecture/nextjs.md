@@ -74,11 +74,17 @@ export default async function Route({ params }: Props) {
 
 `app/layout.tsx` подключает стили импортом ради сайд-эффекта: `import "@/_app/styles/globals.css"`.
 
-- В `tsconfig.json` включён `noUncheckedSideEffectImports`: TypeScript проверяет, что такие импорты
-  разрешаются. Это ловит опечатки в путях. В TS 6 флаг включён по умолчанию, явная настройка
-  выравнивает поведение с TS 5.9 из проекта.
-- Next типизирует только `*.module.css`, поэтому [`apps/web/global.d.ts`](../../../apps/web/global.d.ts)
-  объявляет `declare module "*.css"`. Без него — ошибка TS2882 / TS2307.
+- В `tsconfig.json` включён `noUncheckedSideEffectImports`: TypeScript проверяет, что импорты ради
+  сайд-эффекта разрешаются в исходник TS. Ловит опечатки вроде `import "server-onyl"` (TS2307).
+  В TS 6 флаг включён по умолчанию, явная настройка выравнивает поведение с TS 5.9 из проекта.
+- `.css` для TypeScript не исходник, даже если файл существует. Next 15 типизирует только `*.module.css`,
+  поэтому [`apps/web/global.d.ts`](../../../apps/web/global.d.ts) объявляет `declare module "*.css"` —
+  решение из [документации TS](https://www.typescriptlang.org/tsconfig/#noUncheckedSideEffectImports).
+  Без него — ошибка TS2882 / TS2307.
+- Объявление разрешает любой путь `*.css`, поэтому опечатки в путях к CSS TypeScript **не ловит**.
+  Их ловит сборщик Next: `next dev` / `next build` падают с «Module not found».
+- Next с 16.2 сам объявляет `declare module '*.css' {}` в `next/types/global.d.ts`. После обновления
+  до 16.2+ `apps/web/global.d.ts` удалить.
 - Редактор должен использовать TypeScript из проекта, а не встроенный: «TypeScript: Select TypeScript Version»
   → «Use Workspace Version» (или `"typescript.tsdk": "node_modules/typescript/lib"`). Иначе редактор и
   `pnpm typecheck` расходятся.
