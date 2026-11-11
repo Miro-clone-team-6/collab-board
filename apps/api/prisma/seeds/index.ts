@@ -1,12 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
+import { readDatabaseConfig } from "../../src/config/database.config";
+import { envFilePath } from "../../src/config/env-file";
 import { seedHealthChecks } from "./health-check.seed";
 import { seedUsers } from "./user.seed";
 
-dotenv.config();
-dotenv.config({ path: "../../.env" });
+dotenv.config({ path: envFilePath, quiet: true });
 
-const prisma = new PrismaClient();
+const database = readDatabaseConfig(process.env);
+const prisma = new PrismaClient({ datasourceUrl: database.url });
 
 async function main(): Promise<void> {
   await prisma.$transaction(async (tx) => {

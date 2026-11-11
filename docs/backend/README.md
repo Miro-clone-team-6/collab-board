@@ -36,6 +36,41 @@ DTO и сервиса: use case, порт и адаптер проверки Б�
 Проверка подключения в `health` напрямую использует Prisma, репозиторий ей не нужен.
 Prisma-модель описывает хранение, а не заменяет доменную модель.
 
+## Конфигурация и подключение
+
+`ConfigModule` загружает `apps/api/.env` по пути относительно файла конфигурации,
+независимо от текущего каталога. Корневой `.env` API не читает.
+Приоритет: переменные окружения процесса → `apps/api/.env` → дефолты.
+Локальные `.env` не коммитим; доступные настройки — в `apps/api/.env.example`.
+
+В `src/config/` находятся конфигурации `database` и `http`, объявленные через
+`registerAs`. Zod проверяет значения при запуске; `ConfigType` выводит типы.
+Сервис получает нужную конфигурацию через Nest DI:
+
+```ts
+constructor(
+  @Inject(databaseConfig.KEY) database: ConfigType<typeof databaseConfig>,
+) {
+  // database.url
+}
+```
+
+`DATABASE_URL` обязателен, без дефолта. `PORT` — целое число от 1 до 65535,
+по умолчанию 3001; `NODE_ENV` — development (дефолт), test или production.
+`ALLOWED_ORIGINS` задаёт полный список разрешённых HTTP(S) origins через запятую,
+без путей и завершающего `/`. По умолчанию в dev/test разрешены
+`http://localhost:3000` и `http://127.0.0.1:3000`, в production — ни одного.
+Пустая строка явно задаёт пустой список.
+`API_PORT`, `FRONTEND_URL` и `NEXT_PUBLIC_APP_URL` API больше не использует.
+
+Prisma получает URL из конфигурации явно. API начинает слушать HTTP только после
+успешного подключения к БД; ошибка подключения останавливает запуск.
+При завершении процесса Prisma закрывает соединения через shutdown hooks Nest.
+Сиды используют тот же файл окружения и ту же проверку `DATABASE_URL`;
+Prisma CLI читает `apps/api/.env` при запуске через `pnpm db:*`.
+Если меняете параметры PostgreSQL в корневом `.env` для Docker, согласуйте с ними
+`DATABASE_URL` в `apps/api/.env`.
+
 ## HTTP-контракты
 
 Схемы запросов и ответов описываем в `packages/contracts/src/<feature>/` через Zod.
@@ -56,10 +91,11 @@ PostgreSQL запускается через Docker Compose. Подключен�
 
 ```text
 apps/api/prisma/
-├── schema.prisma          # datasource и generator
-├── models/
-│   ├── user.prisma
-│   └── health-check.prisma
+├── schema/
+│   ├── schema.prisma      # datasource и generator
+│   └── models/
+│       ├── user.prisma
+│       └── health-check.prisma
 ├── migrations/
 │   ├── migration_lock.toml
 │   └── <timestamp>_<name>/migration.sql
@@ -69,7 +105,7 @@ apps/api/prisma/
     └── health-check.seed.ts
 ```
 
-Одна логическая модель или группа моделей агрегата — один файл в `models/`.
+Одна логическая модель или группа моделей агрегата — один файл в `schema/models/`.
 Имена файлов — `kebab-case.prisma`, моделей — PascalCase в единственном числе.
 Таблицы — snake_case во множественном числе через `@@map`, например `User` → `users`.
 Первичные ключи — `String @id @default(uuid())`.
@@ -77,7 +113,8 @@ apps/api/prisma/
 
 `schema.prisma` содержит только настройки подключения и генератора.
 В Prisma 6.4 разбиение схемы включено флагом `prismaSchemaFolder`;
-каталог `prisma` задан в `apps/api/package.json`.
+каталог `prisma/schema` задан в `apps/api/package.json`.
+В этой версии CLI ищет миграции рядом с каталогом схемы: `prisma/migrations`.
 
 ### Миграции
 

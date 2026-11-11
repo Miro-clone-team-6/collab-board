@@ -49,7 +49,7 @@
     "typescript": "catalog:"
   },
   "prisma": {
-    "schema": "prisma",
+    "schema": "prisma/schema",
     "seed": "ts-node prisma/seeds/index.ts"
   }
 }
