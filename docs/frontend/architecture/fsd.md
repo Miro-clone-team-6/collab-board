@@ -38,8 +38,20 @@ apps/web/
 |---|---|
 | `src/_app/entrypoint/` | `AppProviders` (next-themes + TanStack Query), `QueryProvider` |
 | `src/_app/styles/globals.css` | Тема из `@packages/tailwind-config` и директивы Tailwind |
-| `src/_pages/home/` | `HomePage` — базовый пример страницы, см. ниже |
-| `widgets/`, `features/`, `entities/`, `shared/*` | Пустые (`.gitkeep`) |
+| `src/_pages/home/` | `HomePage` — шапка, недавние доски, статус бэкенда, см. ниже |
+| `src/_pages/boards/` | `BoardsPage` — все доски (роут `/boards`) |
+| `src/widgets/header/` | Шапка: навигация, создание доски, тема, аватар |
+| `src/widgets/board-list/` | Сетка карточек досок или пустое состояние |
+| `src/features/create-board/` | Кнопка «Новая доска» (заглушка) |
+| `src/features/toggle-theme/` | Переключатель светлой/тёмной темы |
+| `src/entities/board/` | Тип `Board`, `getBoards` (моки), `BoardCard` |
+| `src/entities/user/` | Тип `User`, `getCurrentUser` (мок), `UserAvatar` |
+| `src/shared/ui/button/` | `Button` |
+| `src/shared/lib/date/` | `formatDate` |
+| `src/shared/config/` | `routes` |
+| `src/shared/api/` | Пустой (`.gitkeep`) |
+
+Слайсы — простой каркас для проверки связей между слоями: данные — моки, API не вызывается.
 
 `HomePage` — заглушка: вся страница помечена `"use client"` и напрямую вызывает
 `useHealthControllerCheck` из `@packages/api`. Оба момента противоречат правилам ниже и
@@ -120,7 +132,8 @@ import { useAddSticky } from "../model/use-add-sticky";
 Исключения — слои без слайсов:
 
 - **`shared`** — public API не обязателен: `index.ts` заводится по необходимости, импорт по файлу
-  разрешён.
+  разрешён. Сейчас: `@/shared/ui/button` (у модуля есть `index.ts`), `@/shared/lib/date/format-date`,
+  `@/shared/config/routes`.
 - **`_app`** — импортируется только из роутера `app/`, напрямую: `@/_app/entrypoint/AppProviders`.
 
 ## 5. Проверка Steiger
