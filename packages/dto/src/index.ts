@@ -10,7 +10,7 @@ export const HealthResponseSchema = z.object({
 export type HealthResponseDto = z.infer<typeof HealthResponseSchema>;
 
 export const CreateUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().min(2),
 });
 
