@@ -37,7 +37,9 @@ pnpm dev           # web :3000, api :3001
 ```bash
 pnpm dev:web / dev:api   # одно приложение
 pnpm typecheck           # типы во всех workspaces
-pnpm lint / lint:fix     # Biome
+pnpm lint                # Biome + Steiger (FSD)
+pnpm lint:fix            # автоисправление Biome
+pnpm lint:fsd            # только Steiger
 pnpm test
 pnpm infra:down
 ```

@@ -22,7 +22,9 @@
 pnpm infra:up          # docker: БД, Redis и т.п.
 pnpm dev:web / dev:api
 pnpm typecheck         # turbo, все workspaces
-pnpm lint / lint:fix   # Biome (не ESLint/Prettier)
+pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)
+pnpm lint:fix          # автоисправление Biome
+pnpm lint:fsd          # только Steiger
 pnpm test
 pnpm db:migrate        # prisma migrate dev
 ```

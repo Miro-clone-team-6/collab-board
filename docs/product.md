@@ -131,7 +131,7 @@ User ─┬─< WorkspaceMember >── Workspace ──< Board ──< Element
 | Библиотека холста — осознанный выбор, прототип до основной разработки | ⬜ нет ADR |
 | NestJS, PostgreSQL, Prisma, Swagger | ✅ есть |
 | BullMQ, S3, OpenAI | ⬜ нет |
-| ESLint + Prettier, **линтер правил FSD** | ⚠️ используется Biome, FSD-линтера нет; нет ADR |
+| ESLint + Prettier, **линтер правил FSD** | ⚠️ Biome вместо ESLint + Prettier; FSD — Steiger ✅; нет ADR |
 | Husky, pnpm, Docker | ✅ есть |
 | Vitest + RTL, тесты на основной функционал | ⬜ нет |
 | Storybook | ⬜ заготовка `apps/ui-docs` |

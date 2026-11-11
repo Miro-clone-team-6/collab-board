@@ -18,8 +18,9 @@
 | **Сборка только Next.js** | `pnpm build:web` (или `pnpm --filter web build`) |
 | **Сборка только NestJS** | `pnpm build:api` (или `pnpm --filter api build`) |
 | **Проверка типов (Typecheck)** | `pnpm typecheck` |
-| **Проверка линтером (Biome)** | `pnpm lint` |
-| **Автоисправление линтера** | `pnpm lint:fix` |
+| **Проверка линтерами (Biome + Steiger)** | `pnpm lint` |
+| **Только правила FSD (Steiger)** | `pnpm lint:fsd`, см. [fsd.md](../architecture/fsd.md#5-проверка-steiger) |
+| **Автоисправление Biome** | `pnpm lint:fix` |
 | **Форматирование кода** | `pnpm format` |
 | **Полный цикл генерации API (OpenAPI + Orval)** | `pnpm codegen` |
 | **Генерация только OpenAPI схемы** | `pnpm generate:api` |
@@ -33,6 +34,7 @@
 В файле `turbo.json` настроен граф задач:
 * `build`: сборка пакетов запускается с учетом зависимостей (`dependsOn: ["^build"]`).
 * `typecheck`: зависит от собранных общих пакетов (`dependsOn: ["^build"]`).
+* `lint:fsd`: Steiger, без зависимостей; кэш по исходникам FSD и `tsconfig` — см. [fsd.md](../architecture/fsd.md#5-проверка-steiger).
 
 ```text
 web#build
