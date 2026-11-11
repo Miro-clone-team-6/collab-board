@@ -82,6 +82,10 @@ export default async function Route({ params }: Props) {
   Типы приходят через `next-env.d.ts`, своего объявления в проекте нет.
 - Объявление разрешает любой путь `*.css`, поэтому опечатки в путях к CSS TypeScript **не ловит**.
   Их ловит сборщик Next: `next dev` / `next build` падают с «Module not found».
+- `next-env.d.ts` генерирует Next (`next dev` / `next build` / `next typegen`), файл в `.gitignore` —
+  [по документации Next](https://nextjs.org/docs/app/api-reference/config/typescript#next-envdts).
+  Скрипт `typecheck` в web запускает `next typegen` перед `tsc`: без него на чистом клоне нет
+  `next-env.d.ts` и типов роутов из `.next/types`, и проверка пропсов страниц молча пропускается.
 - Редактор должен использовать TypeScript из проекта, а не встроенный: «TypeScript: Select TypeScript Version»
   → «Use Workspace Version» (или `"typescript.tsdk": "node_modules/typescript/lib"`). Иначе редактор и
   `pnpm typecheck` расходятся.
