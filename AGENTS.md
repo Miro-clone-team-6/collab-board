@@ -53,3 +53,7 @@ pnpm db:migrate        # prisma migrate dev
 | Code review                          | `docs/review.md`                  |
 
 Если документ расходится с кодом, верить коду и указать на расхождение.
+
+Документация библиотек — версии из `node_modules`, а не по памяти:
+
+- Next.js — `apps/web/node_modules/next/dist/docs/` (Next 16: API и соглашения отличаются от 15).
