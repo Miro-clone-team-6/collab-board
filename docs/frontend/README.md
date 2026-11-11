@@ -1,5 +1,7 @@
 # 🌐 Документация Frontend (`apps/web`)
 
+> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../architecture.md).
+
 Добро пожаловать в техническую документацию клиентской части CollabBoard!  
 Здесь собраны правила, стандарты, архитектурные решения и регламенты работы с кодом фронтенда.
 
@@ -39,9 +41,8 @@
 * [**Next.js 15 App Router & React 19**](./architecture/nextjs.md) — тонкие роуты, Server vs Client Components, rewrites к API.
 
 ### 2. Данные и состояние
-* [**API Contracts, Swagger & Orval**](./data/api-contracts.md) — контракт-ферст подход, автогенерация хуков TanStack Query, транспорт.
 * [**TanStack Query (Server State)**](./data/tanstack-query.md) — настройка провайдера, фабрики ключей, инвалидация кэша.
-* [**State Management: Canvas (Zustand) vs Server State**](./data/state-management.md) — почему стейт холста живет в Zustand, а данные в React Query.
+* Состояние на клиенте (Query / Zustand / React Hook Form) — решение не принято.
 
 ### 3. UI и Дизайн-система
 * [**Стилизация и Tailwind CSS**](./ui/styling.md) — токены темы, палитра стикеров Miro, утилита `cn()`.

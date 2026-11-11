@@ -1,5 +1,7 @@
 # 🌐 Next.js 15 App Router & React 19
 
+> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../../architecture.md).
+
 Веб-приложение `apps/web` построено на базе **Next.js 15 (App Router)** и **React 19**.
 
 ---

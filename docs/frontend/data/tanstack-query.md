@@ -1,5 +1,7 @@
 # ⚡ TanStack Query (Server State)
 
+> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../../architecture.md).
+
 Для управления серверным состоянием (кэширование, фоновая ревалидация, инвалидация кэша) в веб-приложении `apps/web` используется **TanStack Query v5**.  
 Официальная документация: [https://tanstack.com/query/latest](https://tanstack.com/query/latest)
 

@@ -1,9 +1,15 @@
 # 🏛 Feature-Sliced Design (FSD) в CollabBoard
 
+> **Статус:** 🚧 На пересмотре — может описывать то, чего нет в коде. Источник правды — код и [architecture.md](../../architecture.md).
+
 Веб-приложение `apps/web` следует методологии архитектуры **Feature-Sliced Design (v2)**.  
 Официальная документация FSD: [https://feature-sliced.design](https://feature-sliced.design)
 
 ---
+
+> ⚠️ **Известная проблема:** Next.js считает `src/pages/*` маршрутами Pages Router, поэтому FSD-слой
+> `pages` с ним конфликтует. Пока в `src/pages/` только `.gitkeep`. **Не создавать там файлы** до исправления
+> (варианты: переименовать слой, например в `views/`, или вынести роуты в корневой `app/`).
 
 ## 1. Иерархия слоев
 
