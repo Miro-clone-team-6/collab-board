@@ -19,15 +19,15 @@ Conventional Commits, проверяется commitlint на `commit-msg`:
 ```
 
 - `scope` **обязателен**.
-- Сообщение на русском или английском. Я предлагаю на английском
+- Сообщение **только на английском**, в повелительном наклонении (`add`, `fix`, не `added`).
 - Типы: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `style`, `chore`, `ci`.
 - Scope — имя workspace (`web`, `api`, `ui`, `dto`, `utils`, `types`, `tailwind-config`) или
   `repo` (конфиги монорепо), `docs`, `ci`, `infra` (Docker).
 
 ```text
-feat(web): добавить форму входа
-fix(api): вернуть 404 для несуществующей доски
-docs(repo): описать решение по авторизации
+feat(web): add sign-in form
+fix(api): return 404 for missing board
+docs(repo): describe auth decision
 ```
 
 ## Перед PR
@@ -43,7 +43,7 @@ pnpm build
 
 ## PR
 
-- **Заголовок** — в формате коммита: `feat(web): форма входа`.
+- **Заголовок** — в формате коммита: `feat(web): add sign-in form`.
 - **Описание: ?**
 
 ## Ревью и мерж
