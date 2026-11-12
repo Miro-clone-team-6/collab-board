@@ -73,9 +73,8 @@ export default async function Route({ params }: Props) {
 
 `app/layout.tsx` подключает стили импортом ради сайд-эффекта: `import "@/_app/styles/globals.css"`.
 
-- В `tsconfig.json` включён `noUncheckedSideEffectImports`: TypeScript проверяет, что импорты ради
-  сайд-эффекта разрешаются в исходник TS. Ловит опечатки вроде `import "server-onyl"` (TS2307).
-  В TS 6 флаг включён по умолчанию, явная настройка выравнивает поведение с TS 5.9 из проекта.
+- `noUncheckedSideEffectImports` в TypeScript 6 включён по умолчанию: TypeScript проверяет, что импорты ради
+  сайд-эффекта разрешаются в исходник TS. Ловит опечатки вроде `import "server-onyl"` (TS2882).
 - `.css` для TypeScript не исходник, даже если файл существует. Next (с 16.2) объявляет
   `declare module '*.css' {}` в `next/types/global.d.ts` — решение из
   [документации TS](https://www.typescriptlang.org/tsconfig/#noUncheckedSideEffectImports).

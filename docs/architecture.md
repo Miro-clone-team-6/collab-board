@@ -48,13 +48,14 @@ infra (docker-compose.yml)
 
 | Файл                    | Для чего                    | Главное                                                                 |
 | ----------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| `base.json`             | основа всех                 | `NodeNext`, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`, `types: []` |
+| `base.json`             | основа всех                 | `NodeNext`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes` |
 | `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
 | `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
 | `compiled-package.json` | `contracts`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
 | `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
-- `types: []` в base — как умолчание в TS 6: глобальные типы (например, `node`) подключаются явно там, где нужны.
+- TypeScript 6: умолчания (`strict`, `esModuleInterop`, `types: []`, `noUncheckedSideEffectImports`) в конфигах
+  не повторяются. Глобальные типы (например, `node`) подключаются явно там, где нужны.
 - `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
   семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
   (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
