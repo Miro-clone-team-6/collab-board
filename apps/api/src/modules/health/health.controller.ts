@@ -1,5 +1,11 @@
-import { Controller, Get, UseInterceptors } from "@nestjs/common";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, Res, UseInterceptors } from "@nestjs/common";
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiServiceUnavailableResponse,
+  ApiTags,
+} from "@nestjs/swagger";
+import type { Response } from "express";
 import { ZodSerializerDto, ZodSerializerInterceptor } from "nestjs-zod";
 import { HealthService } from "./health.service.js";
 import { HealthResponseDto } from "./health-response.dto.js";
@@ -12,9 +18,18 @@ export class HealthController {
   @Get()
   @UseInterceptors(ZodSerializerInterceptor)
   @ZodSerializerDto(HealthResponseDto)
-  @ApiOperation({ summary: "Проверка работоспособности сервиса" })
-  @ApiOkResponse({ description: "Сервис доступен и функционирует штатно", type: HealthResponseDto })
-  check(): Promise<HealthResponseDto> {
-    return this.healthService.check();
+  @ApiOperation({ summary: "API and services check" })
+  @ApiOkResponse({
+    description: "Healthy",
+    type: HealthResponseDto,
+  })
+  @ApiServiceUnavailableResponse({
+    description: "Partially healthy",
+    type: HealthResponseDto,
+  })
+  async check(@Res({ passthrough: true }) response: Response): Promise<HealthResponseDto> {
+    const health = await this.healthService.check();
+    response.status(health.status === "ok" ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE);
+    return health;
   }
 }

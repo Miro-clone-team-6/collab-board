@@ -6,7 +6,10 @@ NestJS 12, PostgreSQL 16 и Prisma 6.4. Общая картина проекта
 [architecture.md](../architecture.md), запуск окружения — [README](../../README.md).
 
 В `src/modules/` сейчас реализован только `health`:
-`GET /api/v1/health` возвращает состояние процесса и результат проверки подключения к БД.
+`GET /api/v1/health` проверяет готовность API и его зависимостей: сейчас PostgreSQL,
+при подключении других сервисов их проверки добавляются сюда же.
+Если все зависимости доступны — HTTP 200 и `status: "ok"`; при отказе — HTTP 503
+и `status: "error"`. Поле `database` содержит результат проверки PostgreSQL.
 
 `src/modules/users/` — подключённая заглушка `UsersModule`, без эндпоинтов и логики.
 

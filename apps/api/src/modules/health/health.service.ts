@@ -16,7 +16,7 @@ export class HealthService {
     }
 
     return {
-      status: "ok",
+      status: database === "connected" ? "ok" : "error",
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       database,
