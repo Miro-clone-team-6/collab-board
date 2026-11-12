@@ -2,7 +2,7 @@
 
 > Статус: ✅ Описывает текущий каркас `apps/api`.
 
-NestJS 12, PostgreSQL 16 и Prisma 6.4. Общая картина проекта —
+NestJS 12, PostgreSQL 16 и Prisma 7.10.1. Общая картина проекта —
 [architecture.md](../architecture.md), запуск окружения — [README](../../README.md).
 
 В `src/modules/` сейчас реализован только `health`:
@@ -66,11 +66,16 @@ constructor(
 Пустая строка явно задаёт пустой список.
 `API_PORT`, `FRONTEND_URL` и `NEXT_PUBLIC_APP_URL` API больше не использует.
 
-Prisma получает URL из конфигурации явно. API начинает слушать HTTP только после
-успешного подключения к БД; ошибка подключения останавливает запуск.
+Prisma получает URL из конфигурации через PostgreSQL-адаптер `@prisma/adapter-pg`.
+API начинает слушать HTTP только после успешного `SELECT 1` в `onModuleInit`;
+одного `$connect()` с адаптером недостаточно для проверки доступности БД.
+Ошибка подключения останавливает запуск. Таймаут подключения — 5 секунд;
+общая настройка адаптера для API и сидов — `src/prisma/prisma.adapter.ts`.
 При завершении процесса Prisma закрывает соединения через shutdown hooks Nest.
 Сиды используют тот же файл окружения и ту же проверку `DATABASE_URL`;
-Prisma CLI читает `apps/api/.env` при запуске через `pnpm db:*`.
+Prisma CLI загружает `apps/api/.env` через dotenv в `apps/api/prisma.config.ts`.
+Там же заданы пути схемы, миграций и команда сидирования. Генерация клиента при
+`pnpm install` работает без `.env`; для команд работы с БД нужен `DATABASE_URL`.
 Если меняете параметры PostgreSQL в корневом `.env` для Docker, согласуйте с ними
 `DATABASE_URL` в `apps/api/.env`.
 
@@ -146,10 +151,12 @@ apps/api/prisma/
 Первичные ключи — `String @id @default(uuid())`.
 Это модели хранения; отдельные доменные сущности при необходимости живут в коде приложения.
 
-`schema.prisma` содержит только настройки подключения и генератора.
-В Prisma 6.4 разбиение схемы включено флагом `prismaSchemaFolder`;
-каталог `prisma/schema` задан в `apps/api/package.json`.
-В этой версии CLI ищет миграции рядом с каталогом схемы: `prisma/migrations`.
+`schema.prisma` содержит провайдер PostgreSQL и настройки генератора `prisma-client`.
+Разбиение схемы поддерживается без preview-флагов; каталог `prisma/schema` и путь
+`prisma/migrations` заданы в `apps/api/prisma.config.ts`.
+ESM-клиент генерируется в `src/generated/prisma` при `postinstall` или `pnpm db:generate`.
+Сгенерированные файлы не коммитим. Клиент и типы импортируем из
+`generated/prisma/client.js` по относительному пути, а не из `@prisma/client`.
 
 ### Миграции
 
@@ -184,5 +191,6 @@ Prisma хранит историю применения в `_prisma_migrations`;
 `update: {}` сохраняет существующие данные. При изменении моделей обновляем сиды.
 Сейчас они создают тестового пользователя и запись health-check.
 
-`migrate deploy` сиды не вызывает; в production тестовое наполнение не запускаем.
-Prisma 6 может автоматически запустить сиды после сброса базы в dev.
+Prisma 7 не запускает сиды автоматически из `migrate dev`, `migrate reset` или
+`migrate deploy`: наполнение выполняем явно через `pnpm db:seed`.
+В production тестовое наполнение не запускаем.

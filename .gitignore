@@ -6,6 +6,7 @@
 **/.next/
 **/next-env.d.ts
 **/dist/
+/apps/api/src/generated/
 **/build/
 **/.turbo/
 **/*.tsbuildinfo
