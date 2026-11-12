@@ -14,7 +14,7 @@ Install-скрипты зависимостей разрешаются явно 
 
 - `apps/web` — Next.js 16 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`;
   слои `app`/`pages` называются `_app`/`_pages` (гайд FSD для Next.js).
-- `apps/api` — NestJS 11 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
+- `apps/api` — NestJS 12 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/contracts` — общие Zod-схемы HTTP-запросов/ответов и выведенные TS-типы.
   Без зависимостей от Nest, Prisma и React; см. ADR 0002.
 - `packages/ui`, `utils`, `types`, `tailwind-config` — UI-кит, хелперы (`cn`), общие типы, токены и тема.

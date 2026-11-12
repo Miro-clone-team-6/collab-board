@@ -5,7 +5,7 @@
 
 Проект в начале разработки: собран каркас монорепозитория (Next.js + NestJS + PostgreSQL). Продуктовых фич пока нет. Что строим — [docs/product.md](./docs/product.md).
 
-Стек: pnpm + Turborepo, Next.js 16 / React 19, NestJS 11, Prisma, PostgreSQL 16, TanStack Query, Biome.
+Стек: pnpm + Turborepo, Next.js 16 / React 19, NestJS 12, Prisma, PostgreSQL 16, TanStack Query, Biome.
 
 ## Быстрый старт
 
