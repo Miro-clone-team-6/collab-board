@@ -2,7 +2,7 @@
 
 > Статус: ✅ Описывает текущий каркас `apps/api`.
 
-NestJS 11, PostgreSQL 16 и Prisma 6.4. Общая картина проекта —
+NestJS 12, PostgreSQL 16 и Prisma 6.4. Общая картина проекта —
 [architecture.md](../architecture.md), запуск окружения — [README](../../README.md).
 
 В `src/modules/` сейчас реализован только `health`:

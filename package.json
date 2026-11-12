@@ -2,9 +2,9 @@
   "name": "collab-board",
   "private": true,
   "engines": {
-    "node": ">=22.x"
+    "node": "26.x"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@12.18.0",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo watch dev --filter=api --filter=web",

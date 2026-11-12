@@ -5,11 +5,22 @@
 
 Проект в начале разработки: собран каркас монорепозитория (Next.js + NestJS + PostgreSQL). Продуктовых фич пока нет. Что строим — [docs/product.md](./docs/product.md).
 
-Стек: pnpm + Turborepo, Next.js 16 / React 19, NestJS 11, Prisma, PostgreSQL 16, TanStack Query, Biome.
+Стек: pnpm + Turborepo, Next.js 16 / React 19, NestJS 12, Prisma, PostgreSQL 16, TanStack Query, Biome.
 
 ## Быстрый старт
 
-Нужны Node.js ≥ 22, pnpm 9 (`corepack enable`), Docker.
+Нужны Node.js 26.x (версия задана в `.nvmrc`), pnpm 12.18.0, Docker.
+
+Установить и выбрать Node через nvm, затем установить pnpm (Corepack не входит в Node.js 26):
+
+```bash
+nvm install
+nvm use
+npm install --global pnpm@12.18.0
+```
+
+При работе с проектом переключать Node командой `nvm use`. Установка зависимостей требует Node.js 26.x
+(`engines.node` и `engineStrict: true` в `pnpm-workspace.yaml`).
 
 ```bash
 pnpm install

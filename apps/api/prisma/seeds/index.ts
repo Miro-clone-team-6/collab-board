@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
-import { readDatabaseConfig } from "../../src/config/database.config";
-import { envFilePath } from "../../src/config/env-file";
-import { seedHealthChecks } from "./health-check.seed";
-import { seedUsers } from "./user.seed";
+import { readDatabaseConfig } from "../../src/config/database.config.js";
+import { envFilePath } from "../../src/config/env-file.js";
+import { seedHealthChecks } from "./health-check.seed.js";
+import { seedUsers } from "./user.seed.js";
 
 dotenv.config({ path: envFilePath, quiet: true });
 

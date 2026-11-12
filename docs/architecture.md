@@ -8,7 +8,7 @@
 ```text
 apps/
   web/          Next.js 16 (App Router, React 19), роуты в app/, FSD в src/  → :3000
-  api/          NestJS 11 + Prisma (PostgreSQL), Swagger, /api/v1      → :3001
+  api/          NestJS 12 + Prisma (PostgreSQL), Swagger, /api/v1      → :3001
   landing/      заготовка (.gitkeep)
   ui-docs/      заготовка под Storybook (.gitkeep)
   telegram-bot/ заготовка (.gitkeep)
@@ -46,14 +46,18 @@ infra (docker-compose.yml)
 
 | Файл                    | Для чего                    | Главное                                                                 |
 | ----------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| `base.json`             | основа всех                 | `NodeNext`, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`, `types: []` |
+| `base.json`             | основа всех                 | `NodeNext`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes` |
 | `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
 | `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
 | `compiled-package.json` | `contracts`, `utils`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
 | `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
-- `types: []` в base — как умолчание в TS 6: глобальные типы (например, `node`) подключаются явно там, где нужны.
+- TypeScript 6: умолчания (`strict`, `esModuleInterop`, `types: []`, `noUncheckedSideEffectImports`) в конфигах
+  не повторяются. Глобальные типы (например, `node`) подключаются явно там, где нужны.
 - `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
   семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
-  (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
+  (включая `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
+- `apps/api` — ES-модули (`"type": "module"`): пакеты Nest 12 выходят только как ESM. С `NodeNext`
+  относительные импорты пишутся с `.js` (`./app.module.js`), вместо `__dirname` — `import.meta.dirname`.
+  Seed запускается через `tsx`. Пакеты `contracts`, `utils` остаются CommonJS и импортируются из ESM напрямую.
 - `allowJs` и `incremental` в `nextjs.json` Next добавляет сам, если их нет.

@@ -2,6 +2,7 @@
   "name": "api",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
@@ -14,11 +15,11 @@
     "db:seed": "prisma db seed"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.9",
-    "@nestjs/config": "^4.0.0",
-    "@nestjs/core": "^11.0.9",
-    "@nestjs/platform-express": "^11.0.9",
-    "@nestjs/swagger": "^11.0.3",
+    "@nestjs/common": "^12.4.2",
+    "@nestjs/config": "^12.1.1",
+    "@nestjs/core": "^12.4.2",
+    "@nestjs/platform-express": "^12.4.2",
+    "@nestjs/swagger": "^12.1.1",
     "@packages/contracts": "workspace:^",
     "@prisma/client": "catalog:",
     "cookie-parser": "^1.4.7",
@@ -30,20 +31,19 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.2",
-    "@nestjs/schematics": "^11.0.0",
-    "@nestjs/testing": "^11.0.9",
+    "@nestjs/cli": "^12.0.12",
+    "@nestjs/schematics": "^12.0.13",
+    "@nestjs/testing": "^12.4.2",
     "@packages/typescript-config": "workspace:*",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
     "@types/node": "catalog:",
     "prisma": "catalog:",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "catalog:"
   },
   "prisma": {
     "schema": "prisma/schema",
-    "seed": "ts-node prisma/seeds/index.ts"
+    "seed": "tsx prisma/seeds/index.ts"
   }
 }

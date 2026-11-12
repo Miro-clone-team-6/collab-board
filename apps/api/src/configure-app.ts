@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { cleanupOpenApiDoc } from "nestjs-zod";
-import { httpConfig } from "./config/http.config";
+import { httpConfig } from "./config/http.config.js";
 
 export function configureApp(app: INestApplication): void {
   const { isProduction, allowedOrigins } = app.get<ConfigType<typeof httpConfig>>(httpConfig.KEY);
