@@ -2,7 +2,7 @@
   "name": "collab-board",
   "private": true,
   "engines": {
-    "node": ">=22.x"
+    "node": "26.x"
   },
   "packageManager": "pnpm@9.15.4",
   "scripts": {

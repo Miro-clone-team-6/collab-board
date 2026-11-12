@@ -9,7 +9,18 @@
 
 ## Быстрый старт
 
-Нужны Node.js ≥ 22, pnpm 9 (`corepack enable`), Docker.
+Нужны Node.js 26.x (версия задана в `.nvmrc`), pnpm 9.15.4, Docker.
+
+Установить и выбрать Node через nvm, затем установить pnpm (Corepack не входит в Node.js 26):
+
+```bash
+nvm install
+nvm use
+npm install --global pnpm@9.15.4
+```
+
+При работе с проектом переключать Node командой `nvm use`. Установка зависимостей требует Node.js 26.x
+(`engines.node` и `engine-strict=true`).
 
 ```bash
 pnpm install
