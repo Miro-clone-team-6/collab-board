@@ -85,6 +85,38 @@ Nest DTO-класс наследует `createZodDto` общей схемы бе
 Входящих DTO у этого эндпоинта нет; валидация запросов пока не подключена.
 Подробности решения — [ADR 0002](../decisions/0002-shared-contracts.md).
 
+## Ошибки
+
+Глобальный `src/errors/http-exception.filter.ts` зарегистрирован через `APP_FILTER`.
+Обычные HTTP-ошибки 4xx Nest сохраняются. Исключения 5xx и неожиданные ошибки
+логируются на сервере; клиент получает только статус и стандартное сообщение,
+без stack trace, SQL, причин и метаданных. Ошибки запуска обрабатываются вне HTTP-фильтра.
+Штатный ответ health с HTTP 503 не является исключением и сохраняет свой контракт.
+
+Ожидаемые ошибки приложения наследуются от `ApplicationError`, не зависят от HTTP и лежат
+рядом со своим модулем, например `src/modules/users/user.errors.ts`:
+
+```ts
+export class UserNotFoundError extends ApplicationError {
+  readonly code = "USER_NOT_FOUND";
+
+  constructor() {
+    super("User not found");
+  }
+}
+```
+
+Для новой ошибки добавляем одну строку в `applicationErrorStatuses` в
+`src/errors/application-error-statuses.ts`: `["USER_NOT_FOUND", HttpStatus.NOT_FOUND]`.
+Контроллеры и сервисы используют `throw new UserNotFoundError()`.
+Зарегистрированная ошибка возвращается как
+`{ statusCode: 404, error: "USER_NOT_FOUND", message: "User not found" }`.
+Сообщение ошибки приложения публичное: секреты в него не включаем, техническую причину
+можно передать через `cause`. Незарегистрированная ошибка становится безопасным 500.
+Сейчас ошибок приложения нет, поэтому таблица соответствий пуста.
+
+Проверка обработчика без БД: `pnpm --filter api test` (сначала собирает API и contracts).
+
 ## База данных
 
 PostgreSQL запускается через Docker Compose. Подключение задаёт `DATABASE_URL`;
