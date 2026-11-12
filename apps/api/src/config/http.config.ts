@@ -1,14 +1,11 @@
 import { registerAs } from "@nestjs/config";
 import { z } from "zod";
 
-const origin = z
-  .string()
-  .url()
-  .refine((value) => {
-    if (!URL.canParse(value)) return false;
-    const url = new URL(value);
-    return ["http:", "https:"].includes(url.protocol) && url.origin === value;
-  });
+const origin = z.url().refine((value) => {
+  if (!URL.canParse(value)) return false;
+  const url = new URL(value);
+  return ["http:", "https:"].includes(url.protocol) && url.origin === value;
+});
 
 const httpEnvironment = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

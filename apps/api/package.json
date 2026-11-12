@@ -41,7 +41,6 @@
     "@types/express": "^5.0.0",
     "@types/node": "catalog:",
     "prisma": "6.4.0",
-    "source-map-support": "^0.5.21",
     "tsx": "^4.23.15",
     "typescript": "catalog:"
   },

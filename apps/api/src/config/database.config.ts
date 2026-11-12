@@ -3,7 +3,6 @@ import { z } from "zod";
 
 const databaseEnvironment = z.object({
   DATABASE_URL: z
-    .string()
     .url()
     .regex(/^postgres(?:ql)?:\/\//)
     .refine((value) => URL.canParse(value) && new URL(value).hostname.length > 0),

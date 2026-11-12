@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const HealthResponseSchema = z.object({
   status: z.literal("ok"),
-  timestamp: z.string().datetime(),
+  timestamp: z.iso.datetime(),
   uptime: z.number().nonnegative(),
   database: z.enum(["connected", "disconnected"]),
 });

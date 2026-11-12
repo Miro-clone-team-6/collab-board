@@ -58,7 +58,7 @@ infra (docker-compose.yml)
   не повторяются. Глобальные типы (например, `node`) подключаются явно там, где нужны.
 - `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
   семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
-  (включая `scripts/`, `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
+  (включая `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
 - `apps/api` — ES-модули (`"type": "module"`): пакеты Nest 12 выходят только как ESM. С `NodeNext`
   относительные импорты пишутся с `.js` (`./app.module.js`), вместо `__dirname` — `import.meta.dirname`.
   Seed запускается через `tsx`. Пакеты `contracts`, `utils`, `types` остаются CommonJS и импортируются из ESM напрямую.
