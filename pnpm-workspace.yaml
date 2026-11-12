@@ -2,6 +2,15 @@ packages:
   - "apps/*"
   - "packages/*"
 
+engineStrict: true
+
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  "@scarf/scarf": false # install-аналитика не нужна для работы проекта
+  esbuild: true
+  prisma: true
+
 catalog:
   typescript: 5.9.3
   "@types/node": ^26.0.0

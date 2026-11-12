@@ -1,10 +1,12 @@
 # CollabBoard
 
-Монорепозиторий (pnpm 9.15.4 + Turborepo, Node 26.x) для доски совместной работы.
+Монорепозиторий (pnpm 12.18.0 + Turborepo, Node 26.x) для доски совместной работы.
 
 Версия Node задана в `.nvmrc`: перед работой выполнить `nvm install` (если версия ещё не установлена)
-и `nvm use`. pnpm устанавливается отдельно: `npm install --global pnpm@9.15.4`
-(Corepack не входит в Node.js 26). `engines.node` и `.npmrc` запрещают установку зависимостей на других мажорных версиях Node.
+и `nvm use`. pnpm устанавливается отдельно: `npm install --global pnpm@12.18.0`
+(Corepack не входит в Node.js 26). `engines.node` и `engineStrict: true` в `pnpm-workspace.yaml`
+запрещают установку зависимостей на других мажорных версиях Node.
+Install-скрипты зависимостей разрешаются явно через `allowBuilds` в `pnpm-workspace.yaml`.
 
 ## Что где
 
