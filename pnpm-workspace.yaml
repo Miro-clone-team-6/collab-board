@@ -1,0 +1,32 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+engineStrict: true
+
+allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
+  "@scarf/scarf": false # install-аналитика не нужна для работы проекта
+  esbuild: true
+  prisma: true
+
+# Пакеты ещё не объявили поддержку новых мажорных версий, но работают с ними.
+# Убрать правило, когда пакет расширит свои peerDependencies.
+peerDependencyRules:
+  allowedVersions:
+    # Проверено на Nest 12: /health и OpenAPI-документ совпадают с Nest 11.
+    "nestjs-zod>@nestjs/common": "12"
+    "nestjs-zod>@nestjs/swagger": "12"
+    # tsconfck (из Steiger) больше не поддерживается; lint:fsd на TypeScript 6 работает.
+    "tsconfck>typescript": "6"
+
+catalog:
+  zod: ^4.6.7
+  typescript: 6.0.3
+  "@types/node": ^26.0.0
+  react: 19.3.1
+  react-dom: 19.3.1
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  "@tanstack/react-query": ^5.66.0

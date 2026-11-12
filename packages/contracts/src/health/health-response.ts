@@ -1,0 +1,10 @@
+import { z } from "zod";
+
+export const HealthResponseSchema = z.object({
+  status: z.enum(["ok", "error"]),
+  timestamp: z.iso.datetime(),
+  uptime: z.number().nonnegative(),
+  database: z.enum(["connected", "disconnected"]),
+});
+
+export type HealthResponse = z.infer<typeof HealthResponseSchema>;
