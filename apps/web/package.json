@@ -13,7 +13,6 @@
   "dependencies": {
     "@packages/contracts": "workspace:*",
     "@packages/tailwind-config": "workspace:*",
-    "@packages/types": "workspace:*",
     "@packages/ui": "workspace:*",
     "@packages/utils": "workspace:*",
     "@tanstack/react-query": "catalog:",

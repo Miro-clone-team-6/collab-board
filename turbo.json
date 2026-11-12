@@ -8,8 +8,11 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "storybook-static/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "interruptible": true,
+      "passThroughEnv": ["PORT", "DATABASE_URL", "ALLOWED_ORIGINS", "NODE_ENV"]
     },
     "//#lint:biome": {},
     "lint:fsd": {

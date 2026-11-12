@@ -16,10 +16,8 @@ packages/
   contracts/        общие Zod-схемы и TS-типы HTTP-контрактов (ADR 0002)
   ui/               UI-кит — пока пустой (export {})
   utils/            cn() и общие хелперы
-  types/            общие TS-типы
   tailwind-config/  тема (theme.css) и токены холста/стикеров (tokens.ts)
   typescript-config/ общие tsconfig (base, nextjs, nestjs, compiled-package, jit-package)
-  email/ hooks/ i18n/ icons/   заготовки (.gitkeep)
 infra (docker-compose.yml)
   PostgreSQL 16  :5432
 ```
@@ -33,7 +31,7 @@ infra (docker-compose.yml)
 
 | Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
 | ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
-| `contracts`, `utils`, `types`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
+| `contracts`, `utils`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
 | `ui`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
 
 - `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
@@ -51,7 +49,7 @@ infra (docker-compose.yml)
 | `base.json`             | основа всех                 | `NodeNext`, `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`, `types: []` |
 | `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
 | `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
-| `compiled-package.json` | `contracts`, `utils`, `types`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
+| `compiled-package.json` | `contracts`, `utils`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
 | `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
 - `types: []` в base — как умолчание в TS 6: глобальные типы (например, `node`) подключаются явно там, где нужны.

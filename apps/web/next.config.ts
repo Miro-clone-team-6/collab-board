@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@packages/ui",
     "@packages/contracts",
-    "@packages/types",
     "@packages/utils",
     "@packages/tailwind-config",
   ],
