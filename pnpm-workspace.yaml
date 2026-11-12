@@ -23,8 +23,6 @@ peerDependencyRules:
 
 catalog:
   zod: ^4.6.7
-  prisma: 6.4.0
-  "@prisma/client": 6.4.0
   typescript: 6.0.3
   "@types/node": ^26.0.0
   react: 19.3.1
