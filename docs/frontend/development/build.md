@@ -40,8 +40,8 @@ web#build
   └── @packages/utils#build
 ```
 
-`contracts`, `utils` собирает `tsc` в CommonJS. `ui` и `tailwind-config` не собираются: `exports` указывает на `src/*.ts`, Next компилирует их
-через `transpilePackages`. Подробнее — [architecture.md](../../architecture.md).
+`contracts`, `utils` собирает `tsc` в CommonJS. `ui` не собирается: `exports` указывает на `src/*.ts`, Next компилирует его
+через `transpilePackages`. `tailwind-config` — только CSS, его импортирует `globals.css`. Подробнее — [architecture.md](../../architecture.md).
 Turborepo автоматически кэширует результаты сборки на диске (`.turbo`), что обеспечивает мгновенные повторные прогоны команд (FULL TURBO).
 
 Контракты импортируются из `@packages/contracts`; генерации клиента нет.
