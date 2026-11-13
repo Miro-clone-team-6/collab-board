@@ -14,6 +14,7 @@
     "build:api": "turbo build --filter=api",
     "build:utils": "turbo build --filter=@packages/utils",
     "typecheck": "turbo typecheck",
+    "test": "turbo run test --continue=dependencies-successful",
     "lint": "turbo run lint:biome lint:fsd",
     "lint:biome": "biome check --no-errors-on-unmatched",
     "lint:fsd": "turbo lint:fsd",

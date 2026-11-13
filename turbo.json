@@ -26,6 +26,10 @@
       "dependsOn": ["topo"],
       "outputs": []
     },
+    "test": {
+      "cache": false,
+      "outputs": []
+    },
     "generate": {
       "cache": false
     }
