@@ -32,9 +32,9 @@ cp apps/web/.env.example apps/web/.env.local
 
 pnpm infra:up      # PostgreSQL в Docker
 pnpm db:migrate    # миграции
+pnpm db:generate   # обновить Prisma Client после миграции
 pnpm db:seed       # тестовые данные
-pnpm build         # собрать contracts, utils, types в dist — без этого web и api не найдут их
-pnpm dev           # web :3000, api :3001
+pnpm dev           # сборка зависимых пакетов, web :3000, api :3001
 ```
 
 | Что | Где |
@@ -46,8 +46,10 @@ pnpm dev           # web :3000, api :3001
 ## Основные команды
 
 ```bash
-pnpm dev:web / dev:api   # одно приложение
+pnpm dev:web             # только frontend
+pnpm dev:api             # только backend
 pnpm typecheck           # типы во всех workspaces
+pnpm test                # все подключённые автономные тесты с результатами
 pnpm lint                # Biome + Steiger (FSD)
 pnpm lint:fix            # автоисправление Biome
 pnpm lint:fsd            # только Steiger
@@ -60,12 +62,12 @@ pnpm infra:down
 
 | | |
 |---|---|
-| [docs/product.md](./docs/product.md) | Что строим: пользователи, домен, MVP |
+| [docs/product.md](./docs/product.md) | Назначение и требования к продукту |
 | [docs/architecture.md](./docs/architecture.md) | Устройство репозитория, границы, куда класть код |
 | [docs/decisions/](./docs/decisions/README.md) | Архитектурные решения и их статус |
-| [docs/frontend/](./docs/frontend/README.md), [docs/backend/](./docs/backend/README.md) | Детали по частям (на пересмотре) |
+| [docs/frontend/](./docs/frontend/README.md), [docs/backend/](./docs/backend/README.md) | Устройство приложений; статусы — внутри разделов |
 | [docs/pull-request.md](./docs/pull-request.md) | Ветки, коммиты, PR |
 | [docs/review.md](./docs/review.md) | Правила ревью |
 | [AGENTS.md](./AGENTS.md) | Инструкции для AI-агентов |
 
-Каждый документ начинается со статуса: ✅ актуален и сверен с кодом, 🚧 черновик, 📐 решение без кода.
+Структура и правила ведения документации — в [docs/README.md](./docs/README.md).

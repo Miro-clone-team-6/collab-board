@@ -1,63 +1,68 @@
 # Архитектура
 
-> **Статус:** 🚧 Черновик · сверено с кодом 2026-11-11
-> Описывает только то, что есть в репозитории. Планы — в [decisions/](./decisions/README.md).
+## Границы
 
-## Карта
+`apps/web` — интерфейс на Next.js. `apps/api` — отдельное HTTP-приложение на NestJS.
+В локальной разработке web слушает порт 3000, API — 3001.
 
 ```text
-apps/
-  web/          Next.js 16 (App Router, React 19), роуты в app/, FSD в src/  → :3000
-  api/          NestJS 12 + Prisma (PostgreSQL), Swagger, /api/v1      → :3001
-  landing/      заготовка (.gitkeep)
-  ui-docs/      заготовка под Storybook (.gitkeep)
-  telegram-bot/ заготовка (.gitkeep)
-packages/
-  contracts/        общие Zod-схемы и TS-типы HTTP-контрактов (ADR 0002)
-  ui/               UI-кит — пока пустой (export {})
-  utils/            cn() и общие хелперы
-  tailwind-config/  тема (theme.css) и токены холста/стикеров (tokens.ts)
-  typescript-config/ общие tsconfig (base, nextjs, nestjs, compiled-package, jit-package)
-infra (docker-compose.yml)
-  PostgreSQL 16  :5432
+Браузер → Next.js /api/* → NestJS /api/v1/* → PostgreSQL
+                              ↑
+                     packages/contracts
 ```
 
-## Сборка пакетов и tsconfig
+Next.js проксирует `/api/*` на адрес API из `NEXT_PUBLIC_API_URL`.
+API принимает HTTP-запросы, выполняет серверную логику и работает с PostgreSQL
+через Prisma. Прямого доступа фронтенда к БД и исходникам API нет.
+Схемы JSON и типы запросов/ответов общие; код приложений развивается отдельно.
+Устройство HTTP-контрактов — в [backend](backend/README.md#http-контракты).
 
-Схема — из гайда Turborepo по [TypeScript](https://turborepo.dev/docs/guides/tools/typescript) и
-[internal packages](https://turborepo.dev/docs/core-concepts/internal-packages).
+Сейчас API реализует только healthcheck. Авторизации, досок, WebSocket,
+Redis и фоновых задач нет. PostgreSQL 16 запускается из `docker-compose.yml`.
 
-Пакет собирается, только если его импортирует `apps/api`: Node не исполняет TS-исходники.
+## Общие пакеты
 
-| Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
-| ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
-| `contracts`, `utils`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
-| `ui`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
+| Пакет | Содержимое | Выдача кода |
+| --- | --- | --- |
+| `contracts` | Zod-схемы HTTP и выведенные типы | `tsc` → `dist/` |
+| `utils` | Хелпер `cn` | `tsc` → `dist/` |
+| `ui` | Заготовка UI-кита (`export {}`) | Исходники |
+| `tailwind-config` | Тема и токены | Исходники и CSS |
+| `typescript-config` | Общие настройки TypeScript | JSON-конфиги |
 
-- `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
-  найденные через `node_modules`, внешними: проверяет их, но не кладёт в `dist` приложения.
-- Web компилирует все `@packages/*` через `transpilePackages`.
-- Версия TypeScript одна на весь репозиторий — `catalog` в `pnpm-workspace.yaml`.
+`contracts` и `utils` публикуют типы из `src/`, исполняемый CommonJS-код —
+из `dist/`. API использует `contracts`; web использует общие пакеты через
+`transpilePackages`. Общие пакеты не импортируют код из `apps/`.
 
-### tsconfig
+`apps/landing`, `apps/ui-docs`, `apps/telegram-bot` содержат только `.gitkeep`.
 
-Общие конфиги — пакет `@packages/typescript-config` (devDependency `workspace:*`). Turbo видит его как
-зависимость: правка конфига сбрасывает кэш `typecheck` у всех, кто его использует. Корневого `tsconfig.json` нет.
+## Зависимости и сборка
 
-| Файл                    | Для чего                    | Главное                                                                 |
-| ----------------------- | --------------------------- | ----------------------------------------------------------------------- |
-| `base.json`             | основа всех                 | `NodeNext`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes` |
-| `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
-| `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
-| `compiled-package.json` | `contracts`, `utils`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
-| `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
+- Корневой `package.json` содержит команды репозитория и инструменты разработки.
+- `package.json` приложения или пакета содержит его зависимости и команды.
+- `pnpm-workspace.yaml` задаёт workspaces, версии общих зависимостей (`catalog`)
+  и разрешённые install-скрипты (`allowBuilds`). Зависимости только одного
+  приложения хранят версии в его `package.json`.
+- `pnpm-lock.yaml` фиксирует разрешённые версии всего дерева; его обновляет pnpm.
+- `turbo.json` задаёт порядок задач и кэш. `build` и `dev` сначала выполняют
+  сборку зависимых пакетов. `pnpm dev` запускает web и API через Turbo watch.
 
-- TypeScript 6: умолчания (`strict`, `esModuleInterop`, `types: []`, `noUncheckedSideEffectImports`) в конфигах
-  не повторяются. Глобальные типы (например, `node`) подключаются явно там, где нужны.
-- `apps/api`: `target: ES2021`, потому что с ES2022+ включается `useDefineForClassFields` и меняется
-  семантика полей классов. Оставлено, как в шаблоне Nest. `tsconfig.json` — для редактора и `typecheck`
-  (включая `prisma/`), `tsconfig.build.json` — для `nest build` (`rootDir: src`, только код приложения).
-- `apps/api` — ES-модули (`"type": "module"`): пакеты Nest 12 выходят только как ESM. С `NodeNext`
-  относительные импорты пишутся с `.js` (`./app.module.js`), вместо `__dirname` — `import.meta.dirname`.
-  Seed запускается через `tsx`. Пакеты `contracts`, `utils` остаются CommonJS и импортируются из ESM напрямую.
-- `allowJs` и `incremental` в `nextjs.json` Next добавляет сам, если их нет.
+## TypeScript
+
+Каждый workspace имеет свой `tsconfig.json`, наследующий конфиг из
+`packages/typescript-config`. Корневого tsconfig нет.
+
+| Конфиг | Назначение |
+| --- | --- |
+| `base.json` | Общие настройки, `NodeNext` и проверки типов |
+| `nestjs.json` | Декораторы Nest, метаданные и типы Node |
+| `nextjs.json` | Next.js, JSX, DOM и проверка без выдачи JS |
+| `compiled-package.json` | Сборка `src/` в `dist/` |
+| `jit-package.json` | Пакеты, исходники которых обрабатывает приложение |
+
+API работает как ESM: относительные импорты имеют расширение `.js`,
+пути к файлам вычисляются через `import.meta.dirname`.
+`apps/api/tsconfig.json` проверяет приложение, сиды и Prisma config;
+`tsconfig.build.json` собирает только `src/` в `dist/`.
+
+Детали: [backend](backend/README.md), [frontend](frontend/README.md).

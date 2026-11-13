@@ -31,6 +31,7 @@ Install-скрипты зависимостей разрешаются явно 
 pnpm infra:up          # docker: PostgreSQL
 pnpm dev:web / dev:api
 pnpm typecheck         # turbo, все workspaces
+pnpm test              # тесты без запуска полного окружения
 pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)
 pnpm lint:fix          # автоисправление Biome
 pnpm lint:fsd          # только Steiger
@@ -39,25 +40,17 @@ pnpm db:migrate        # prisma migrate dev
 
 Перед завершением задачи: `pnpm typecheck && pnpm lint`.
 
-## Правила
-
-В процессе
-
 ## Документация
 
-У каждого документа в начале статус. ✅ — описывает существующий код.
-📐 / 💬 / 🚧 — план или черновик: **не считать описанное реализованным**.
-
-| Область                              | Файл                              |
-| ------------------------------------ | --------------------------------- |
-| Что строим                           | `docs/product.md`                 |
-| Устройство, границы, куда класть код | `docs/architecture.md`            |
-| Решения и их статус                  | `docs/decisions/README.md`        |
-| FSD / Next.js                        | `docs/frontend/architecture/*` ✅ |
-| Данные / стили / сборка фронта       | `docs/frontend/*` (на пересмотре) |
-| NestJS / Prisma                      | `docs/backend/*` (на пересмотре)  |
-| Ветки, коммиты, PR                   | `docs/pull-request.md`            |
-| Code review                          | `docs/review.md`                  |
+- [Что строим](docs/product.md)
+- [Устройство, границы и размещение кода](docs/architecture.md)
+- [Архитектурные решения](docs/decisions/README.md)
+- [FSD](docs/frontend/architecture/fsd.md) и [Next.js](docs/frontend/architecture/nextjs.md)
+- [Frontend: данные, стили и сборка](docs/frontend/README.md) — на пересмотре
+- [Backend: NestJS и Prisma](docs/backend/README.md)
+- [Ветки, коммиты и PR](docs/pull-request.md)
+- [Code review](docs/review.md)
+- [Выбор и размещение тестов](docs/tests.md)
 
 Если документ расходится с кодом, верить коду и указать на расхождение.
 
