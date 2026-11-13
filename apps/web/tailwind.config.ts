@@ -1,4 +1,11 @@
-import { colors, radius } from "@packages/tailwind-config";
+import {
+  colors,
+  fontFamily,
+  fontSize,
+  radius,
+  shadows,
+  transitionDuration,
+} from "@packages/tailwind-config";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -13,6 +20,10 @@ const config: Config = {
     extend: {
       colors,
       borderRadius: radius,
+      boxShadow: shadows,
+      fontFamily,
+      fontSize,
+      transitionDuration,
     },
   },
   plugins: [],
