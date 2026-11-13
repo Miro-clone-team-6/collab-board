@@ -1,7 +1,9 @@
-# 0001. Генерация HTTP-клиента из OpenAPI
+# 0003. Генерация HTTP-клиента из OpenAPI
 
-> Статус: ♻️ Заменено [ADR 0002](0002-shared-contracts.md).
-> Дата: 2026-11-11.
+> Статус: ♻️ Заменено [0003-shared-contracts](0003-shared-contracts.md).
+> Реализация: нет, удалена при замене.
+> Дата: 11 ноября 2026.
+> Issue: [#3](https://github.com/Miro-clone-team-6/collab-board/issues/3).
 
 ## Прежнее решение
 

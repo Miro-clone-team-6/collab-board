@@ -6,21 +6,18 @@
 и `nvm use`. pnpm устанавливается отдельно: `npm install --global pnpm@12.18.0`
 (Corepack не входит в Node.js 26). `engines.node` и `engineStrict: true` в `pnpm-workspace.yaml`
 запрещают установку зависимостей на других мажорных версиях Node.
-Install-скрипты зависимостей разрешаются явно через `allowBuilds` в `pnpm-workspace.yaml`.
 
 ## Что где
 
 Рабочий код:
 
-- `apps/web` — Next.js 16 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`;
-  слои `app`/`pages` называются `_app`/`_pages` (гайд FSD для Next.js).
+- `apps/web` — Next.js 16 (App Router, React 19). Роуты в `app/` (тонкие реэкспорты), FSD в `src/`.
 - `apps/api` — NestJS 12 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/contracts` — общие Zod-схемы HTTP-запросов/ответов и выведенные TS-типы.
-  Без зависимостей от Nest, Prisma и React; см. ADR 0002.
-- `packages/ui` — заготовка UI-кита (пока `export {}`).
-- `packages/utils` — хелпер `cn` для CSS-классов.
-- `packages/tailwind-config` — токены и тема.
-- `packages/typescript-config` — общие tsconfig. Как устроены и какой пакет собирается — `docs/architecture.md`.
+  Без зависимостей от Nest, Prisma и React.
+- `packages/ui` — общие стили (Tailwind 4, тема) и PostCSS-конфиг приложений; компонентов пока нет.
+- `packages/shared` — хелпер `cn` для CSS-классов.
+- `packages/typescript-config` — общие tsconfig.
 
 Пустые заготовки (только `.gitkeep`): `apps/landing`, `apps/ui-docs`, `apps/telegram-bot`.
 Не ссылаться на них как на существующий код.
@@ -35,23 +32,25 @@ pnpm test              # тесты без запуска полного окр�
 pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)
 pnpm lint:fix          # автоисправление Biome
 pnpm lint:fsd          # только Steiger
+pnpm lint:docs         # ссылки в Markdown
 pnpm db:migrate        # prisma migrate dev
 ```
 
-Перед завершением задачи: `pnpm typecheck && pnpm lint`.
+Перед завершением задачи: `pnpm typecheck && pnpm lint`; если менялись `.md` — ещё `pnpm lint:docs`.
 
 ## Документация
 
+- [Как писать документацию](docs/README.md)
 - [Что строим](docs/product.md)
-- [Устройство, границы и размещение кода](docs/architecture.md)
+- [Границы приложений и правила зависимостей](docs/architecture.md)
 - [Архитектурные решения](docs/decisions/README.md)
-- [FSD](docs/frontend/architecture/fsd.md) и [Next.js](docs/frontend/architecture/nextjs.md)
-- [Frontend: данные, стили и сборка](docs/frontend/README.md) — на пересмотре
+- [Frontend: FSD, Next.js, стили](docs/frontend/README.md)
 - [Backend: NestJS и Prisma](docs/backend/README.md)
 - [Ветки, коммиты и PR](docs/pull-request.md)
 - [Code review](docs/review.md)
 - [Выбор и размещение тестов](docs/tests.md)
 
+Документ со строкой `> Черновик:` описывает то, чего в коде нет или что не сверено.
 Если документ расходится с кодом, верить коду и указать на расхождение.
 
 Документация библиотек — версии из `node_modules`, а не по памяти:

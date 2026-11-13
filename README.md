@@ -63,7 +63,7 @@ pnpm infra:down
 | | |
 |---|---|
 | [docs/product.md](./docs/product.md) | Назначение и требования к продукту |
-| [docs/architecture.md](./docs/architecture.md) | Устройство репозитория, границы, куда класть код |
+| [docs/architecture.md](./docs/architecture.md) | Границы приложений и правила зависимостей |
 | [docs/decisions/](./docs/decisions/README.md) | Архитектурные решения и их статус |
 | [docs/frontend/](./docs/frontend/README.md), [docs/backend/](./docs/backend/README.md) | Устройство приложений; статусы — внутри разделов |
 | [docs/pull-request.md](./docs/pull-request.md) | Ветки, коммиты, PR |

@@ -1,8 +1,10 @@
-# 0002. Общие HTTP-контракты на Zod
+# 0003. Общие HTTP-контракты на Zod
 
-> Статус: ✅ Принято, реализовано для healthcheck.
-> Дата: 2026-11-11.
-> Заменяет [ADR 0001](0001-api-contracts.md).
+> Статус: ✅ Принято.
+> Реализация: частично: healthcheck.
+> Дата: 11 ноября 2026.
+> Issue: [#3](https://github.com/Miro-clone-team-6/collab-board/issues/3).
+> Заменяет [0003-api-contracts](0003-api-contracts.md).
 
 ## Контекст
 
