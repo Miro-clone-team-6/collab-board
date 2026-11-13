@@ -16,7 +16,7 @@ packages/
   contracts/        общие Zod-схемы и TS-типы HTTP-контрактов (ADR 0002)
   ui/               UI-кит — пока пустой (export {})
   utils/            cn() и общие хелперы
-  tailwind-config/  тема (theme.css) и токены холста/стикеров (tokens.ts)
+  tailwind-config/  тема Tailwind 4 (theme.css): CSS-переменные, @theme, dark-вариант, цвета стикеров
   typescript-config/ общие tsconfig (base, nextjs, nestjs, compiled-package, jit-package)
 infra (docker-compose.yml)
   PostgreSQL 16  :5432
@@ -32,11 +32,12 @@ infra (docker-compose.yml)
 | Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
 | ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
 | `contracts`, `utils`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
-| `ui`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
+| `ui`                    | Just-in-Time    | `exports` → `src/*.ts` и `src/styles.css`, без сборки        | только web     |
+| `tailwind-config`       | —               | только CSS: `exports` → `src/theme.css`, без TS и сборки     | только web     |
 
 - `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
   найденные через `node_modules`, внешними: проверяет их, но не кладёт в `dist` приложения.
-- Web компилирует все `@packages/*` через `transpilePackages`.
+- Web компилирует TS-пакеты `@packages/*` через `transpilePackages`.
 - Версия TypeScript одна на весь репозиторий — `catalog` в `pnpm-workspace.yaml`.
 
 ### tsconfig
@@ -50,7 +51,7 @@ infra (docker-compose.yml)
 | `nextjs.json`           | `apps/web`                  | `Bundler`, DOM, `jsx: preserve`, `noEmit`, плагин `next`                |
 | `nestjs.json`           | `apps/api`                  | декораторы и метаданные, `isolatedModules: false`, `target: ES2021`     |
 | `compiled-package.json` | `contracts`, `utils`     | `rootDir`/`outDir`/`include` через `${configDir}` — tsconfig пакета из одной строки |
-| `jit-package.json`      | `ui`, `tailwind-config` | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
+| `jit-package.json`      | `ui`                    | `Bundler`, DOM, `jsx: react-jsx`, `noEmit`                           |
 
 - TypeScript 6: умолчания (`strict`, `esModuleInterop`, `types: []`, `noUncheckedSideEffectImports`) в конфигах
   не повторяются. Глобальные типы (например, `node`) подключаются явно там, где нужны.

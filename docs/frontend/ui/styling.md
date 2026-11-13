@@ -9,11 +9,25 @@
 
 ## 1. Организация стилей
 
-* **`@packages/tailwind-config`**:
-  - `src/theme.css`: глобальные CSS-переменные темы (`--background`, `--foreground`, `--primary`, `--card`, `--border`, `--radius`). Поддерживает светлую и тёмную тему (`.dark`).
-  - `src/tokens.ts`: специфичные для CollabBoard токены (холст, сетка, стикеры).
-* **`apps/web/src/_app/styles/globals.css`**: импортирует тему из `@packages/tailwind-config/theme.css` и директивы `@tailwind`.
-* **`apps/web/tailwind.config.ts`**: подключает пресет из `@packages/tailwind-config`.
+Tailwind CSS 4, подключён через `@tailwindcss/postcss` (`apps/web/postcss.config.mjs`). `tailwind.config.*` нет:
+вся настройка — в CSS.
+
+* **`@packages/tailwind-config/theme.css`** (пакет только из CSS):
+  - CSS-переменные темы (`--background`, `--foreground`, `--primary`, `--card`, `--border`, `--radius`, `--canvas-*`)
+    в `:root` и `.dark`. Значения — полные цвета (`hsl(...)`), поэтому модификаторы прозрачности (`bg-primary/50`) работают.
+  - `@theme inline` превращает их в утилиты (`bg-background`, `text-muted-foreground`, `rounded-lg`…).
+    `inline` нужен, чтобы утилиты ссылались на переменную, а не на её значение, и `.dark` их переопределял.
+  - `@theme` с цветами стикеров — от темы не зависят.
+  - `@custom-variant dark`: `dark:` срабатывает по классу `.dark`, который ставит `next-themes` (`attribute="class"`).
+  - Совместимость с v3 в `@layer base`: цвет границы по умолчанию — `--color-border` (в v4 — `currentColor`),
+    `cursor: pointer` у кнопок.
+* **`@packages/ui/styles.css`**: `@source "./"` — регистрирует компоненты UI-кита для поиска классов.
+  Tailwind 4 сам ищет классы только внутри `apps/web` и пропускает `node_modules`, через который подключён пакет.
+  Путь в `@source` считается от CSS-файла, имя пакета там не работает — поэтому директива лежит в самом пакете.
+* **`apps/web/src/_app/styles/globals.css`**: `@import "tailwindcss"`, тема, `@packages/ui/styles.css`.
+* Biome разбирает директивы Tailwind (`css.parser.tailwindDirectives` в `biome.json`).
+* VS Code: `.vscode/settings.json` открывает `*.css` в режиме `tailwindcss` (без предупреждений `unknownAtRules`)
+  и включает подсказки классов внутри `cn(...)`; `.vscode/extensions.json` рекомендует Tailwind CSS IntelliSense и Biome.
 
 ---
 
@@ -51,12 +65,12 @@ export function StickyCard({ title, color = "yellow" }: { title: string; color?:
 
 ---
 
-## 3. Функция `cn()` из `@packages/utils`
+## 3. Функция `cn()` из `@packages/shared`
 
 Для динамического и безопасного объединения классов Tailwind ВСЕГДА используйте утилиту `cn()`:
 
 ```tsx
-import { cn } from "@packages/utils";
+import { cn } from "@packages/shared";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean;

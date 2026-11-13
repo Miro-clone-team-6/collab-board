@@ -1,4 +1,4 @@
-import { cn } from "@packages/utils";
+import { cn } from "@packages/shared";
 import type { ButtonHTMLAttributes } from "react";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
