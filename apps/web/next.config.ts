@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  typedRoutes: true,
   // Не генерировать apps/web/AGENTS.md при `next dev`: куда смотреть агентам, указано в корневом AGENTS.md.
   agentRules: false,
   transpilePackages: ["@packages/ui", "@packages/contracts", "@packages/shared"],
