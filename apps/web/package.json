@@ -13,7 +13,7 @@
   "dependencies": {
     "@packages/contracts": "workspace:*",
     "@packages/ui": "workspace:*",
-    "@packages/utils": "workspace:*",
+    "@packages/shared": "workspace:*",
     "@tanstack/react-query": "catalog:",
     "lucide-react": "^0.475.0",
     "next": "16.4.6",

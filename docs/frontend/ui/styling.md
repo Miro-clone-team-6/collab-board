@@ -65,12 +65,12 @@ export function StickyCard({ title, color = "yellow" }: { title: string; color?:
 
 ---
 
-## 3. Функция `cn()` из `@packages/utils`
+## 3. Функция `cn()` из `@packages/shared`
 
 Для динамического и безопасного объединения классов Tailwind ВСЕГДА используйте утилиту `cn()`:
 
 ```tsx
-import { cn } from "@packages/utils";
+import { cn } from "@packages/shared";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isActive?: boolean;

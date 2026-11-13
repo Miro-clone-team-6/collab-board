@@ -37,7 +37,7 @@
 ```text
 web#build
   ├── @packages/contracts#build
-  └── @packages/utils#build
+  └── @packages/shared#build
 ```
 
 `contracts`, `utils` собирает `tsc` в CommonJS. `ui` не собирается: `exports` указывает на `src/*.ts`, Next компилирует его

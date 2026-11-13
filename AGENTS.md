@@ -19,7 +19,7 @@ Install-скрипты зависимостей разрешаются явно 
   Без зависимостей от Nest, Prisma и React; см. ADR 0002.
 - `packages/ui` — заготовка UI-кита: общие стили (`globals.css`: Tailwind 4, тема) и PostCSS-конфиг приложений;
   компонентов пока нет (`export {}`).
-- `packages/utils` — хелпер `cn` для CSS-классов.
+- `packages/shared` — хелпер `cn` для CSS-классов.
 - `packages/typescript-config` — общие tsconfig. Как устроены и какой пакет собирается — `docs/architecture.md`.
 
 Пустые заготовки (только `.gitkeep`): `apps/landing`, `apps/ui-docs`, `apps/telegram-bot`.
