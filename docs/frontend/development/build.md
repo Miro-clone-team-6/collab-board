@@ -17,6 +17,7 @@
 | **Сборка всего проекта (Production build)** | `pnpm build` |
 | **Сборка только Next.js** | `pnpm build:web` (или `pnpm --filter web build`) |
 | **Сборка только NestJS** | `pnpm build:api` (или `pnpm --filter api build`) |
+| **Сборка только UI Kit** | `pnpm build:ui` (или `pnpm --filter @packages/ui build`) |
 | **Проверка типов (Typecheck)** | `pnpm typecheck` |
 | **Проверка линтерами (Biome + Steiger)** | `pnpm lint` |
 | **Только правила FSD (Steiger)** | `pnpm lint:fsd`, см. [fsd.md](../architecture/fsd.md#5-проверка-steiger) |
@@ -30,17 +31,18 @@
 В файле `turbo.json` настроен граф задач:
 * `build`: сборка пакетов запускается с учетом зависимостей (`dependsOn: ["^build"]`).
 * `typecheck`: `dependsOn: ["topo"]`, где `topo` — пустая задача с `dependsOn: ["^topo"]` (приём из гайда Turborepo).
-  Проверки идут параллельно, но кэш сбрасывается при изменении зависимостей. Сборка не нужна: `types` пакетов указывает на `src`.
+  Проверки идут параллельно, но кэш сбрасывается при изменении зависимостей.
 * `lint:biome`: корневая задача (`//#lint:biome`), Biome проверяет весь репозиторий одним запуском — как советует [гайд Turborepo](https://turborepo.dev/docs/guides/tools/biome). Скриптов `lint` в пакетах нет.
 * `lint:fsd`: Steiger, без зависимостей; кэш по исходникам FSD и `tsconfig` — см. [fsd.md](../architecture/fsd.md#5-проверка-steiger).
 
 ```text
 web#build
   ├── @packages/contracts#build
+  ├── @packages/ui#build
   └── @packages/utils#build
 ```
 
-`contracts`, `utils` собирает `tsc` в CommonJS. `ui` и `tailwind-config` не собираются: `exports` указывает на `src/*.ts`, Next компилирует их
+`contracts`, `utils` собирает `tsc` в CommonJS. `ui` собирает `rslib` в автономный bundleless ESM-пакет (`dist/`). `tailwind-config` не собирается: `exports` указывает на `src/*.ts`, Next компилирует его
 через `transpilePackages`. Подробнее — [architecture.md](../../architecture.md).
 Turborepo автоматически кэширует результаты сборки на диске (`.turbo`), что обеспечивает мгновенные повторные прогоны команд (FULL TURBO).
 

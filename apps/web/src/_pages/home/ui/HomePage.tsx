@@ -1,5 +1,6 @@
 "use client";
 
+import { Test } from "@packages/ui";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { getBoards } from "@/entities/board";
@@ -22,6 +23,10 @@ export function HomePage() {
       <Header />
       <main className="mx-auto flex max-w-5xl flex-col gap-8 p-6">
         <h1 className="text-3xl font-extrabold tracking-tight">Привет, {user.name}</h1>
+        <div className="flex gap-2">
+          <Test />
+          <Test variant="outline">Outline variant</Test>
+        </div>
 
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">

@@ -12,6 +12,7 @@
     "dev:api": "turbo watch dev --filter=api",
     "build:web": "turbo build --filter=web",
     "build:api": "turbo build --filter=api",
+    "build:ui": "turbo build --filter=@packages/ui",
     "build:utils": "turbo build --filter=@packages/utils",
     "typecheck": "turbo typecheck",
     "lint": "turbo run lint:biome lint:fsd",

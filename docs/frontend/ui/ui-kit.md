@@ -38,3 +38,31 @@
 * **Модальные окна (`Dialog`) и шторки (`Drawer`):** открываются пользователем по клику и не нужны на этапе первой загрузки страницы. Загружайте их лениво через `next/dynamic`.
 * **Экспорт доски в PNG/PDF (html2canvas, jsPDF):** библиотеки экспорта очень тяжелые, их загрузка должна производиться только в момент клика на кнопку «Экспорт».
 * **Базовые атомарные элементы (`Button`, `Input`, `Badge`):** рендерятся сразу, их оборачивать в `dynamic` не нужно.
+
+---
+
+## 4. Архитектура пакета и шаблон компонентов
+
+### 4.1. Сборка (Rslib)
+Пакет собирается автономно в ESM через **Rslib** (`dist/`):
+- `dist/index.js` — ESM бандл
+- `dist/index.d.ts` — TypeScript декларации
+- Сборка запускается через `pnpm build:ui` (или в общем графе `pnpm build`).
+
+### 4.2. Шаблон папки компонента (`packages/ui/src/components/<ComponentName>/`)
+Каждый компонент оформляется по строгой 4-файловой структуре:
+
+```text
+packages/ui/src/components/<ComponentName>/
+├── <ComponentName>.tsx   # JSX, forwardRef, data-slot, стилизация через cva/cn
+├── types.ts              # Интерфейс пропсов (extends HTMLAttributes), VariantProps
+├── constants.ts          # Определение cva(...) с вариантами и defaultVariants
+└── index.ts              # Локальный публичный экспорт (компонент, типы, варианты)
+```
+
+### 4.3. Сквозная цепочка экспортов
+1. `packages/ui/src/components/<ComponentName>/index.ts` — экспорт компонента, вариантов и типов.
+2. `packages/ui/src/components/index.ts` — общий реестр всех компонентов.
+3. `packages/ui/src/model/index.ts` — общий реестр моделей/типов (при наличии).
+4. `packages/ui/src/index.ts` — публичная точка входа библиотеки.
+5. `packages/ui/dist/` — артефакты сборки.

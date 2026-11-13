@@ -14,8 +14,8 @@ apps/
   telegram-bot/ заготовка (.gitkeep)
 packages/
   contracts/        общие Zod-схемы и TS-типы HTTP-контрактов (ADR 0002)
-  ui/               UI-кит — пока пустой (export {})
-  utils/            cn() и общие хелперы
+  ui/               UI-кит — автономная ESM-сборка через Rslib (dist/)
+  utils/            cn(), cva и общие хелперы
   tailwind-config/  тема (theme.css) и токены холста/стикеров (tokens.ts)
   typescript-config/ общие tsconfig (base, nextjs, nestjs, compiled-package, jit-package)
 infra (docker-compose.yml)
@@ -27,12 +27,13 @@ infra (docker-compose.yml)
 Схема — из гайда Turborepo по [TypeScript](https://turborepo.dev/docs/guides/tools/typescript) и
 [internal packages](https://turborepo.dev/docs/core-concepts/internal-packages).
 
-Пакет собирается, только если его импортирует `apps/api`: Node не исполняет TS-исходники.
+Пакеты `contracts` и `utils` собираются `tsc` в CommonJS (их использует и `apps/api`). Пакет `ui` автономно собирается через Rslib в bundleless ESM-библиотеку (`dist/`). Пакет `tailwind-config` отдаётся в виде исходников без сборки.
 
-| Пакет                          | Стратегия Turbo | Как отдаётся                                                | Кто использует |
-| ------------------------------ | --------------- | ----------------------------------------------------------- | -------------- |
-| `contracts`, `utils`        | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
-| `ui`, `tailwind-config` | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | только web     |
+| Пакет                   | Стратегия Turbo | Как отдаётся                                                | Кто использует |
+| ----------------------- | --------------- | ----------------------------------------------------------- | -------------- |
+| `contracts`, `utils`    | Compiled        | `tsc` → `dist/` (CommonJS); `exports.types` → `src/index.ts` | web, api       |
+| `ui`                    | Compiled        | Rslib → `dist/` (ESM); `exports` → `dist/index.js` / `dist/index.d.ts` | web            |
+| `tailwind-config`       | Just-in-Time    | `exports` → `src/*.ts`, без сборки                           | web            |
 
 - `types` указывает на исходники, поэтому `typecheck` не ждёт `build`. tsc считает файлы,
   найденные через `node_modules`, внешними: проверяет их, но не кладёт в `dist` приложения.
