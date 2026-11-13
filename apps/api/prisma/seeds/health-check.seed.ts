@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "../../src/generated/prisma/client.js";
 
 export async function seedHealthChecks(tx: Prisma.TransactionClient): Promise<void> {
   const id = "84b0579e-875e-47e6-91ba-24a0b62bb913";
