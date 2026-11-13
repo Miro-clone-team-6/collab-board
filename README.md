@@ -50,9 +50,10 @@ pnpm dev:web             # только frontend
 pnpm dev:api             # только backend
 pnpm typecheck           # типы во всех workspaces
 pnpm test                # все подключённые автономные тесты с результатами
-pnpm lint                # Biome + Steiger (FSD)
+pnpm lint                # Biome + Steiger (FSD) + ссылки в Markdown
 pnpm lint:fix            # автоисправление Biome
 pnpm lint:fsd            # только Steiger
+pnpm lint:docs           # только ссылки в Markdown
 pnpm infra:down
 ```
 

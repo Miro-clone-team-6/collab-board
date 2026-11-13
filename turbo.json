@@ -15,6 +15,9 @@
       "passThroughEnv": ["PORT", "DATABASE_URL", "ALLOWED_ORIGINS", "NODE_ENV"]
     },
     "//#lint:biome": {},
+    "//#lint:docs": {
+      "cache": false
+    },
     "lint:fsd": {
       "inputs": ["src/**", "steiger.config.ts", "tsconfig.json"],
       "outputs": []

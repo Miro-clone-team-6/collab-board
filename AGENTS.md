@@ -29,14 +29,14 @@ pnpm infra:up          # docker: PostgreSQL
 pnpm dev:web / dev:api
 pnpm typecheck         # turbo, все workspaces
 pnpm test              # тесты без запуска полного окружения
-pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web)
+pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web) + ссылки в Markdown
 pnpm lint:fix          # автоисправление Biome
 pnpm lint:fsd          # только Steiger
-pnpm lint:docs         # ссылки в Markdown
+pnpm lint:docs         # только ссылки в Markdown
 pnpm db:migrate        # prisma migrate dev
 ```
 
-Перед завершением задачи: `pnpm typecheck && pnpm lint`; если менялись `.md` — ещё `pnpm lint:docs`.
+Перед завершением задачи: `pnpm typecheck && pnpm lint`.
 
 ## Документация
 
