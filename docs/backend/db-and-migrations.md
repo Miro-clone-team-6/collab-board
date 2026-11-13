@@ -2,16 +2,22 @@
 
 Пути относительно `apps/api/`:
 
-| Путь | Содержимое |
-| --- | --- |
-| `src/prisma/` | Nest-модуль, PrismaService и фабрика PostgreSQL-адаптера |
-| `src/generated/prisma/` | Генерируемый клиент; не коммитится |
-| `prisma.config.ts` | Пути схемы и миграций, команда сидов, загрузка `.env` и URL |
-| `prisma/schema/schema.prisma` | Datasource и генератор клиента |
-| `prisma/schema/models/*.prisma` | Модели хранения |
-| `prisma/migrations/<timestamp>_<name>/migration.sql` | Изменения структуры и обязательных данных |
-| `prisma/seeds/*.seed.ts` | Тестовые данные |
-| `prisma/seeds/index.ts` | Явный порядок сидов и общая транзакция |
+```text
+prisma.config.ts          — схема, миграции, команда сидов, загрузка .env и URL
+prisma/
+  schema/
+    schema.prisma        — datasource и генератор клиента
+    models/*.prisma      — модели хранения
+  migrations/
+    <timestamp>_<name>/
+      migration.sql      — изменения структуры и обязательных данных
+  seeds/
+    <model>.seed.ts      — тестовые данные
+    index.ts             — порядок сидов и общая транзакция
+src/
+  prisma/                — Nest-модуль, PrismaService, PostgreSQL-адаптер
+  generated/prisma/      — генерируемый клиент, не коммитится
+```
 
 ## Подключение
 
@@ -33,14 +39,13 @@ SQL-запроса. При завершении приложения соеди�
 пути. `pnpm install` генерирует клиент без `.env`; команды работы с БД требуют
 `DATABASE_URL`. Параметры URL должны соответствовать PostgreSQL из Compose.
 
-## Миграции и сиды
+## Миграции
 
 Команды из корня репозитория:
 
 ```bash
 pnpm --filter api exec prisma migrate dev --name add_users
 pnpm db:generate
-pnpm db:seed
 ```
 
 Первая команда создаёт и применяет миграцию в dev-базе; имя приведено для примера.
@@ -54,7 +59,9 @@ pnpm db:seed
 историю хранит `_prisma_migrations`. Готовые миграции применяются командой
 `pnpm db:migrate:deploy`.
 
-Чтобы изменить модель, которая уже влита в `develop/main` ветку — необходимо создавать новую миграцию.
+Изменения моделей, уже влитых в `develop` или `main`, оформляются новой миграцией.
+
+## Сиды
 
 Тестовые сиды запускаются только явно: `pnpm db:seed`.
 Файл `<model>.seed.ts` получает `Prisma.TransactionClient`;
@@ -62,4 +69,3 @@ pnpm db:seed
 Нумерации нет. Повторный запуск безопасен благодаря `upsert` по уникальному
 ключу или стабильному ID; `update: {}` сохраняет существующие записи.
 Сейчас создаются тестовый пользователь и запись health-check.
-В production тестовые сиды не запускаются.

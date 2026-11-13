@@ -43,8 +43,8 @@
 | Тип | Вопрос читателя | Заголовок | Шаблон | Пример |
 | --- | --- | --- | --- | --- |
 | Устройство | Как это устроено у нас и какие правила? | Существительное: «Обработка ошибок» | [explanation.md](_templates/explanation.md) | [Обработка ошибок](backend/error-handling.md) |
-| Инструкция | Как сделать X? | Инфинитив: «Добавить миграцию» | [how-to.md](_templates/how-to.md) | [Миграции и сиды](backend/db-and-migrations.md#миграции-и-сиды) |
-| Справочник | Где лежит, как называется? | Существительное: «Структура `apps/api`» | [reference.md](_templates/reference.md) | [Общий код API](backend/README.md#общий-код-api) |
+| Инструкция | Как сделать X? | Инфинитив: «Добавить миграцию» | [how-to.md](_templates/how-to.md) | [Миграции](backend/db-and-migrations.md#миграции) |
+| Справочник | Где лежит, как называется? | Существительное: «Структура `apps/api`» | [reference.md](_templates/reference.md) | [Общий код API](backend/backend-structure.md#общий-код-api) |
 | ADR | Почему так, а не иначе? | Решение: «Общие HTTP-контракты на Zod» | [adr.md](_templates/adr.md) | [Плоские модули backend](decisions/0019-backend-modules.md) |
 
 Новый документ начинается с копии шаблона; комментарии `<!-- -->` удаляются при заполнении.

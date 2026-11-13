@@ -18,7 +18,7 @@ Nest DTO и Swagger используют эти же схемы через `nest
 Пакет не зависит от Nest, Prisma и React.
 
 Клиент из OpenAPI не генерируется. Prisma-модели остаются внутри API.
-Подключение к Nest описано в [backend](../backend/README.md#http-контракты).
+Подключение к Nest описано в [backend](../backend/backend-structure.md#http-контракты).
 
 ## Последствия
 
