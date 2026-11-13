@@ -24,7 +24,10 @@
 **/.aws/
 **/.specify/
 **/.cursor/
-**/.vscode/
+**/.vscode/*
+# Общие настройки редактора для проекта: язык Tailwind для CSS и рекомендуемые расширения.
+!/.vscode/settings.json
+!/.vscode/extensions.json
 **/.idea/
 
 # OS files
