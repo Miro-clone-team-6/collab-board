@@ -9,7 +9,7 @@
     "postinstall": "prisma generate",
     "start": "nest start",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm --workspace-root build:api && node --test test/*.test.mjs",
+    "test": "pnpm --workspace-root build:api && node --test --test-reporter=spec test/*.test.mjs",
     "db:generate": "prisma generate",
     "db:migrate:dev": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
