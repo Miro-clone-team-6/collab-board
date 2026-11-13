@@ -17,9 +17,9 @@ Install-скрипты зависимостей разрешаются явно 
 - `apps/api` — NestJS 12 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/contracts` — общие Zod-схемы HTTP-запросов/ответов и выведенные TS-типы.
   Без зависимостей от Nest, Prisma и React; см. ADR 0002.
-- `packages/ui` — заготовка UI-кита (пока `export {}`).
+- `packages/ui` — заготовка UI-кита: общие стили (`globals.css`: Tailwind 4, тема) и PostCSS-конфиг приложений;
+  компонентов пока нет (`export {}`).
 - `packages/utils` — хелпер `cn` для CSS-классов.
-- `packages/tailwind-config` — токены и тема.
 - `packages/typescript-config` — общие tsconfig. Как устроены и какой пакет собирается — `docs/architecture.md`.
 
 Пустые заготовки (только `.gitkeep`): `apps/landing`, `apps/ui-docs`, `apps/telegram-bot`.

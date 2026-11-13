@@ -1,3 +1,17 @@
+/*
+ * Общие стили приложений: Tailwind, тема и поиск классов UI-кита.
+ * Приложение подключает файл как `@import "@packages/ui/globals.css"`,
+ * а PostCSS-конфиг берёт из `@packages/ui/postcss.config`.
+ */
+@import "tailwindcss";
+
+/*
+ * Классы компонентов UI-кита. Tailwind 4 сам ищет классы только в проекте, где идёт сборка,
+ * и пропускает node_modules, через который пакет попадает в приложение. Путь в @source
+ * считается от этого файла; имя пакета здесь не работает.
+ */
+@source "../";
+
 /* Тёмная тема включается классом .dark на <html> (next-themes, attribute="class"). */
 @custom-variant dark (&:where(.dark, .dark *));
 

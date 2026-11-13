@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@packages/contracts": "workspace:*",
-    "@packages/tailwind-config": "workspace:*",
     "@packages/ui": "workspace:*",
     "@packages/utils": "workspace:*",
     "@tanstack/react-query": "catalog:",
@@ -30,7 +29,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "postcss": "^8.5.2",
     "steiger": "0.10.0",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
