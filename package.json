@@ -12,7 +12,7 @@
     "dev:api": "turbo watch dev --filter=api",
     "build:web": "turbo build --filter=web",
     "build:api": "turbo build --filter=api",
-    "build:utils": "turbo build --filter=@packages/utils",
+    "build:shared": "turbo build --filter=@packages/shared",
     "typecheck": "turbo typecheck",
     "test": "turbo run test --continue=dependencies-successful",
     "lint": "turbo run lint:biome lint:fsd lint:docs",
