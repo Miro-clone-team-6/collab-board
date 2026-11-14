@@ -14,9 +14,11 @@
     "build:api": "turbo build --filter=api",
     "build:shared": "turbo build --filter=@packages/shared",
     "typecheck": "turbo typecheck",
-    "lint": "turbo run lint:biome lint:fsd",
+    "test": "turbo run test --continue=dependencies-successful",
+    "lint": "turbo run lint:biome lint:fsd lint:docs",
     "lint:biome": "biome check --no-errors-on-unmatched",
     "lint:fsd": "turbo lint:fsd",
+    "lint:docs": "remark . --quiet --frail --no-stdout",
     "lint:fix": "biome check --write --no-errors-on-unmatched",
     "format": "biome format --write --no-errors-on-unmatched",
     "infra:up": "docker compose up -d",
@@ -35,6 +37,8 @@
     "@commitlint/config-conventional": "^19.6.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
+    "remark-cli": "^12.0.1",
+    "remark-validate-links": "^13.1.0",
     "turbo": "^2.3.3",
     "typescript": "catalog:"
   }
