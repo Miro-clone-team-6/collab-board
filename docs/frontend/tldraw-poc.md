@@ -23,10 +23,16 @@ TanStack Query и не связано с API приложения. Зависи�
 
 ## Запустить и проверить
 
-1. Из корня репозитория запустить frontend:
+Нужны Node.js 26.x и pnpm 12.18.0: `engines.node` и `packageManager` в корневом `package.json`.
+`.nvmrc` также задаёт Node.js 26, без фиксации minor/patch; `engineStrict: true`
+в `pnpm-workspace.yaml` запрещает установку на других мажорных версиях Node.js.
+Менеджер версий Node.js можно выбрать самостоятельно; Volta не требуется.
+
+1. Из корня репозитория установить зависимости и запустить frontend:
 
    ```bash
-   volta run --node 26.13.1 pnpm dev:web
+   pnpm install
+   pnpm dev:web
    ```
 
 2. Открыть `http://localhost:3000/research/tldraw` в двух вкладках. Создать фигуру в одной,
@@ -118,12 +124,12 @@ SQLite — один из вариантов: для него есть готов
 подтвердили совместимость с текущими Next.js, React и TypeScript проекта.
 SSR редактора отключён; страница успешно проходит статическую генерацию Next.js.
 
-Проверки запускаются из корня с Node через Volta:
+Проверки запускаются из корня репозитория:
 
 ```bash
-volta run --node 26.13.1 pnpm typecheck
-volta run --node 26.13.1 pnpm lint
-volta run --node 26.13.1 pnpm build
+pnpm typecheck
+pnpm lint
+pnpm build
 ```
 
 Typecheck, полный lint и build прошли. Проблем совместимости, блокирующих PoC, не обнаружено.
