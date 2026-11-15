@@ -1,8 +1,14 @@
 {
   "extends": "@packages/typescript-config/nextjs.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@packages/shared": ["../../packages/shared/src/index.ts"],
+      "@packages/shared/*": ["../../packages/shared/src/*"],
+      "@packages/ui": ["../../packages/ui/src/index.ts"],
+      "@packages/ui/*": ["../../packages/ui/src/*"],
+      "@packages/contracts": ["../../packages/contracts/src/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
