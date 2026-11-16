@@ -2,6 +2,7 @@
   "extends": "@packages/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./src/*"],
       "@packages/shared": ["../../packages/shared/src/index.ts"],
