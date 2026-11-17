@@ -51,7 +51,23 @@ export class YjsSocketProvider {
 
     this.setupListeners();
   }
-
+  // 🔥 Вспомогательный метод для безопасной конвертации в Uint8Array
+  private toUint8Array(data: unknown): Uint8Array {
+    if (data instanceof Uint8Array) {
+      return data;
+    }
+    if (data instanceof ArrayBuffer) {
+      return new Uint8Array(data);
+    }
+    if (Array.isArray(data)) {
+      return new Uint8Array(data);
+    }
+    // На случай, если Socket.IO передал Buffer (Node.js)
+    if (typeof Buffer !== "undefined" && Buffer.isBuffer(data)) {
+      return new Uint8Array(data);
+    }
+    throw new Error("Invalid binary data received from server");
+  }
   private randomColor() {
     const colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
     return colors[Math.floor(Math.random() * colors.length)];
@@ -64,13 +80,16 @@ export class YjsSocketProvider {
       this.socket.emit("yjs-sync-request", stateVector);
     });
 
-    this.socket.on("yjs-sync", (update: Uint8Array) => {
-      Y.applyUpdate(this.doc, update, "socketio");
-      //this.isSynced = true;
+    this.socket.on("yjs-sync", (update: unknown) => {
+      // 🔥 ИСПРАВЛЕНО: Гарантируем, что данные — это Uint8Array
+      const binaryUpdate = this.toUint8Array(update);
+      Y.applyUpdate(this.doc, binaryUpdate, "socketio");
     });
 
-    this.socket.on("yjs-update", (update: Uint8Array) => {
-      Y.applyUpdate(this.doc, update, "socketio");
+    this.socket.on("yjs-update", (update: unknown) => {
+      // 🔥 ИСПРАВЛЕНО: Гарантируем, что данные — это Uint8Array
+      const binaryUpdate = this.toUint8Array(update);
+      Y.applyUpdate(this.doc, binaryUpdate, "socketio");
     });
 
     this.doc.on("update", (update: Uint8Array, origin: unknown) => {
@@ -96,21 +115,32 @@ export class YjsSocketProvider {
       const typedUpdates = updates as [number, Record<string, unknown> | null][];
       const states = this.awareness.getStates();
 
+      const added: number[] = [];
+      const updated: number[] = [];
+      const removed: number[] = [];
+
       typedUpdates.forEach(([clientId, state]) => {
         if (state === null) {
-          states.delete(clientId);
+          if (states.has(clientId)) {
+            states.delete(clientId);
+            removed.push(clientId);
+          }
         } else {
+          if (states.has(clientId)) {
+            updated.push(clientId);
+          } else {
+            added.push(clientId);
+          }
           states.set(clientId, state);
         }
       });
 
-      this.awareness.emit("update", [
-        {
-          added: [],
-          updated: typedUpdates.map(([id]) => id),
-          removed: [],
-        },
-      ]);
+      // 🔥 ИСПРАВЛЕНО:
+      // 1. Второй аргумент ДОЛЖЕН быть массивом (как требует lib0/observable).
+      // 2. Мы передаем ровно 2 аргумента, убирая лишний 'this' в конце.
+      if (added.length > 0 || updated.length > 0 || removed.length > 0) {
+        this.awareness.emit("update", [{ added, updated, removed }]);
+      }
     });
 
     this.socket.on("disconnect", () => {

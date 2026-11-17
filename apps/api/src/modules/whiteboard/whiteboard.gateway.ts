@@ -1,4 +1,3 @@
-// src/modules/whiteboard/whiteboard.gateway.ts
 import {
   ConnectedSocket,
   MessageBody,
@@ -11,7 +10,7 @@ import {
 import { Server, Socket } from "socket.io";
 import * as Y from "yjs";
 
-// Строгий тип для состояния awareness вместо any
+// Строгий тип для состояния awareness
 type AwarenessState = Record<string, unknown> | null;
 
 @WebSocketGateway({
@@ -51,7 +50,22 @@ export class WhiteboardGateway implements OnGatewayConnection, OnGatewayDisconne
   handleDisconnect(client: Socket) {
     const boardId = client.handshake.query.boardId as string | undefined;
     console.log(`❌ Client ${client.id} disconnected from board: ${boardId}`);
-    // Yjs автоматически очистит состояние этого клиента на других машинах через свой внутренний механизм таймаутов.
+
+    if (!boardId) return;
+
+    const boardAwareness = this.awareness.get(boardId);
+    if (!boardAwareness) return;
+
+    // 🔥 ИСПРАВЛЕНО: Находим и удаляем состояние этого клиента из awareness
+    // Это гарантирует, что курсор исчезнет у всех остальных клиентов
+    const yjsClientId = client.data?.yjsClientId;
+    if (yjsClientId !== undefined) {
+      boardAwareness.delete(yjsClientId);
+
+      // Рассылаем обновление всем остальным клиентам
+      const updates: [number, AwarenessState][] = [[yjsClientId, null]];
+      client.to(boardId).emit("awareness-update", updates);
+    }
   }
 
   @SubscribeMessage("yjs-sync-request")
@@ -65,19 +79,42 @@ export class WhiteboardGateway implements OnGatewayConnection, OnGatewayDisconne
     }
   }
 
+  // 🔥 ИСПРАВЛЕНО: Убран лишний символ @
   @SubscribeMessage("yjs-update")
-  handleYjsUpdate(@ConnectedSocket() client: Socket, @MessageBody() update: Uint8Array) {
+  handleYjsUpdate(@ConnectedSocket() client: Socket, @MessageBody() update: unknown) {
     const boardId = client.handshake.query.boardId as string | undefined;
     if (!boardId) return;
-    const doc = boardId ? this.docs.get(boardId) : undefined;
 
-    if (doc) {
-      // Применяем обновление с origin 'socketio'
-      Y.applyUpdate(doc, update, "socketio");
+    const doc = this.docs.get(boardId);
+    if (!doc) return;
 
-      // Рассылаем обновление всем ОСТАЛЬНЫМ клиентам в этой комнате
-      client.to(boardId).emit("yjs-update", update);
+    // 🔥 Безопасно конвертируем входящие данные в Uint8Array
+    const binaryUpdate = this.toUint8Array(update);
+
+    // Применяем обновление к документу на сервере
+    Y.applyUpdate(doc, binaryUpdate, "socketio");
+
+    // Рассылаем это обновление всем остальным клиентам в комнате
+    client.to(boardId).emit("yjs-update", binaryUpdate);
+  }
+
+  // 🔥 Вспомогательный метод для гарантированной конвертации в Uint8Array
+  private toUint8Array(data: unknown): Uint8Array {
+    if (data instanceof Uint8Array) {
+      return data;
     }
+    if (data instanceof ArrayBuffer) {
+      return new Uint8Array(data);
+    }
+    if (Array.isArray(data)) {
+      return new Uint8Array(data);
+    }
+    // Проверка на Node.js Buffer (Socket.IO иногда передает данные в этом формате)
+    if (typeof Buffer !== "undefined" && Buffer.isBuffer(data)) {
+      return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    }
+
+    throw new Error(`Invalid binary data received from client. Type: ${typeof data}`);
   }
 
   @SubscribeMessage("awareness-update")

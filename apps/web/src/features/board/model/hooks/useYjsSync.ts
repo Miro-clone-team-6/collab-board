@@ -4,16 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
 import { useBoardStore } from "../boardStore";
 import { getYjsProvider, YjsSocketProvider } from "../realtime/yjsProvider";
-// Типы приложения (Zustand / React)
 import type { Connection, Cursor, Shape } from "../types";
-// Типы для внутреннего устройства Yjs
 import type { AwarenessState, YConnectionData } from "../types/yjs.types";
 
 export const useYjsSync = (boardId: string, userId: string, userName: string) => {
   const providerRef = useRef<YjsSocketProvider | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  // Храним оригинальные действия стора, чтобы избежать бесконечных циклов
   const originalActionsRef = useRef({
     addShape: useBoardStore.getState().addShape,
     updateShape: useBoardStore.getState().updateShape,
@@ -22,72 +19,173 @@ export const useYjsSync = (boardId: string, userId: string, userName: string) =>
     removeConnection: useBoardStore.getState().removeConnection,
   });
 
+  const shapeObserversRef = useRef<Map<string, (event: Y.YMapEvent<unknown>) => void>>(new Map());
+
   useEffect(() => {
     const provider = getYjsProvider({ boardId, userId, userName });
     providerRef.current = provider;
     setIsReady(true);
 
-    // === 1. Yjs → Zustand (получение данных от других клиентов) ===
+    // === 1. Yjs → Zustand ===
+    // biome-ignore lint/suspicious/noExplicitAny: Yjs internal type definition requires 'any' for AbstractType
+    const shapesObserver = (events: Y.YEvent<Y.AbstractType<any>>[]) => {
+      const firstEvent = events[0];
+      if (firstEvent?.transaction?.origin === "local") return;
 
-    const shapesObserver = (event: Y.YMapEvent<unknown>) => {
-      event.changes.keys.forEach((change, key) => {
-        if (change.action === "delete") {
-          useBoardStore.getState().removeShape(key);
-          return;
-        }
+      events.forEach((event) => {
+        if (event.target === provider.shapes) {
+          event.changes.keys.forEach((change, key) => {
+            if (change.action === "delete") {
+              useBoardStore.getState().removeShape(key);
+              const observer = shapeObserversRef.current.get(key);
+              if (observer) {
+                const yMap = provider.shapes.get(key) as Y.Map<unknown> | undefined;
+                if (yMap) yMap.unobserve(observer);
+                shapeObserversRef.current.delete(key);
+              }
+            } else if (change.action === "add") {
+              const yMap = provider.shapes.get(key) as Y.Map<unknown> | undefined;
+              if (!yMap) return;
 
-        const shapeData = provider.shapes.get(key) as Y.Map<unknown> | undefined;
-        if (!shapeData) return;
+              const shape = createShapeFromYjs(key, yMap);
+              originalActionsRef.current.addShape(shape);
 
-        if (change.action === "add" || change.action === "update") {
-          const shape: Shape = {
-            id: key,
-            type: shapeData.get("type") as string,
-            x: shapeData.get("x") as number,
-            y: shapeData.get("y") as number,
-            fill: shapeData.get("fill") as string | undefined,
-            stroke: shapeData.get("stroke") as string | undefined,
-            strokeWidth: shapeData.get("strokeWidth") as number | undefined,
-            rotation: (shapeData.get("rotation") as number) || 0,
-            ...(shapeData.get("type") === "rect" && {
-              width: shapeData.get("width") as number,
-              height: shapeData.get("height") as number,
-            }),
-            ...(shapeData.get("type") === "circle" && {
-              radius: shapeData.get("radius") as number,
-            }),
-            ...(shapeData.get("type") === "text" && {
-              text: shapeData.get("text") as string,
-              fontSize: shapeData.get("fontSize") as number,
-              width: shapeData.get("width") as number,
-            }),
-            ...(shapeData.get("type") === "sticky" && {
-              text: shapeData.get("text") as string,
-              width: shapeData.get("width") as number,
-              height: shapeData.get("height") as number,
-              color: shapeData.get("color") as string,
-            }),
-            ...(shapeData.get("type") === "comment" && {
-              text: shapeData.get("text") as string,
-              author: shapeData.get("author") as string,
-            }),
-            ...(shapeData.get("type") === "group" && {
-              children:
-                (shapeData.get("children") as unknown[] | undefined)?.map((c: unknown) =>
-                  (c as { toJSON: () => unknown }).toJSON(),
-                ) || [],
-              scaleX: shapeData.get("scaleX") as number | undefined,
-              scaleY: shapeData.get("scaleY") as number | undefined,
-            }),
-          } as Shape;
+              const shapeObserver = createShapeObserver(key, yMap);
+              yMap.observe(shapeObserver);
+              shapeObserversRef.current.set(key, shapeObserver);
+            }
+          });
+        } else if (event.path.length > 0) {
+          const shapeId = event.path[0] as string;
+          const yMap = provider.shapes.get(shapeId) as Y.Map<unknown> | undefined;
+          if (!yMap) return;
 
-          const existing = useBoardStore.getState().shapes.find((s) => s.id === key);
-          if (existing) {
-            originalActionsRef.current.updateShape(key, shape);
-          } else {
-            originalActionsRef.current.addShape(shape);
+          const patch: Partial<Shape> = { id: shapeId };
+          let hasChanges = false;
+
+          const mapEvent = event as Y.YMapEvent<unknown>;
+          mapEvent.changes.keys.forEach((change, key) => {
+            if (change.action === "update" || change.action === "add") {
+              const value = yMap.get(key);
+              if (value !== undefined) {
+                (patch as Record<string, unknown>)[key] = value;
+                hasChanges = true;
+              }
+            }
+          });
+
+          if (hasChanges) {
+            originalActionsRef.current.updateShape(shapeId, patch);
           }
         }
+      });
+    };
+
+    const createShapeObserver = (shapeId: string, yMap: Y.Map<unknown>) => {
+      return (event: Y.YMapEvent<unknown>) => {
+        if (event.transaction.origin === "local") return;
+
+        const patch: Partial<Shape> = { id: shapeId };
+        let hasChanges = false;
+
+        event.changes.keys.forEach((change, key) => {
+          if (change.action === "update" || change.action === "add") {
+            const value = yMap.get(key);
+            if (value !== undefined) {
+              (patch as Record<string, unknown>)[key] = value;
+              hasChanges = true;
+            }
+          }
+        });
+
+        if (hasChanges) {
+          originalActionsRef.current.updateShape(shapeId, patch);
+        }
+      };
+    };
+
+    const createShapeFromYjs = (id: string, yMap: Y.Map<unknown>): Shape => {
+      const type = (yMap.get("type") as string) || "rect";
+      const base = {
+        id,
+        type,
+        x: (yMap.get("x") as number) || 0,
+        y: (yMap.get("y") as number) || 0,
+        rotation: (yMap.get("rotation") as number) || 0,
+        fill: yMap.get("fill") as string | undefined,
+        stroke: yMap.get("stroke") as string | undefined,
+        strokeWidth: yMap.get("strokeWidth") as number | undefined,
+      };
+
+      switch (type) {
+        case "circle":
+          return { ...base, type: "circle", radius: (yMap.get("radius") as number) || 50 } as Shape;
+        case "text":
+          return {
+            ...base,
+            type: "text",
+            text: (yMap.get("text") as string) || "",
+            fontSize: (yMap.get("fontSize") as number) || 16,
+            width: (yMap.get("width") as number) || 100,
+          } as Shape;
+        case "sticky":
+          return {
+            ...base,
+            type: "sticky",
+            text: (yMap.get("text") as string) || "",
+            width: (yMap.get("width") as number) || 200,
+            height: (yMap.get("height") as number) || 200,
+            color: (yMap.get("color") as string) || "#fef3c7",
+          } as Shape;
+        case "comment":
+          return {
+            ...base,
+            type: "comment",
+            text: (yMap.get("text") as string) || "",
+            author: (yMap.get("author") as string) || "Аноним",
+          } as Shape;
+        case "image":
+          return {
+            ...base,
+            type: "image",
+            src: (yMap.get("src") as string) || "",
+            width: (yMap.get("width") as number) || 200,
+            height: (yMap.get("height") as number) || 200,
+          } as Shape;
+        case "group": {
+          const rawChildren = yMap.get("children");
+          const children =
+            rawChildren instanceof Y.Array
+              ? (rawChildren.toArray() as unknown[])
+              : Array.isArray(rawChildren)
+                ? rawChildren
+                : [];
+          return {
+            ...base,
+            type: "group",
+            children,
+            scaleX: yMap.get("scaleX") as number | undefined,
+            scaleY: yMap.get("scaleY") as number | undefined,
+          } as Shape;
+        }
+        default:
+          return {
+            ...base,
+            type: "rect",
+            width: (yMap.get("width") as number) || 100,
+            height: (yMap.get("height") as number) || 100,
+          } as Shape;
+      }
+    };
+
+    const initializeExistingShapes = () => {
+      provider.shapes.forEach((yMap, key) => {
+        const shapeYMap = yMap as Y.Map<unknown>;
+        const shape = createShapeFromYjs(key, shapeYMap);
+        originalActionsRef.current.addShape(shape);
+        const shapeObserver = createShapeObserver(key, shapeYMap);
+        shapeYMap.observe(shapeObserver);
+        shapeObserversRef.current.set(key, shapeObserver);
       });
     };
 
@@ -98,44 +196,71 @@ export const useYjsSync = (boardId: string, userId: string, userName: string) =>
       const newIds = new Set(newConnections.map((c) => c.id));
 
       newConnections.forEach((conn) => {
-        if (!currentIds.has(conn.id)) {
+        if (!currentIds.has(conn.id))
           originalActionsRef.current.addConnection(conn as unknown as Connection);
-        }
       });
-
       currentConns.forEach((conn) => {
-        if (!newIds.has(conn.id)) {
-          originalActionsRef.current.removeConnection(conn.id);
-        }
+        if (!newIds.has(conn.id)) originalActionsRef.current.removeConnection(conn.id);
       });
     };
 
+    // 🔥 ИСПРАВЛЕНО 1: Сравнение через Map для 100% защиты от heartbeat-дрожания
     const awarenessObserver = () => {
       const states = provider.awareness.getStates();
       const localClientId = provider.doc.clientID;
 
-      const cursors: Cursor[] = [];
+      // Собираем новые данные в Map для быстрого поиска по ID
+      const newCursorsMap = new Map<string, Cursor>();
       states.forEach((state: unknown, clientId: number) => {
         const typedState = state as AwarenessState | undefined;
         if (typedState?.user && typedState?.cursor && clientId !== localClientId) {
-          cursors.push({
-            id: typedState.user.id,
-            x: typedState.cursor.x,
-            y: typedState.cursor.y,
+          newCursorsMap.set(`cursor-${clientId}`, {
+            id: `cursor-${clientId}`,
+            x: Math.round(typedState.cursor.x), // Округление убирает субпиксельный шум
+            y: Math.round(typedState.cursor.y),
             color: typedState.user.color,
             userName: typedState.user.name,
           });
         }
       });
 
-      useBoardStore.setState({ cursors });
+      const currentCursors = useBoardStore.getState().cursors;
+
+      // Быстрая проверка количества
+      if (currentCursors.length !== newCursorsMap.size) {
+        useBoardStore.setState({ cursors: Array.from(newCursorsMap.values()) });
+        return;
+      }
+
+      // Глубокая проверка: изменились ли координаты или цвета хотя бы у одного курсора
+      let hasChanges = false;
+      for (const [id, newC] of newCursorsMap) {
+        const oldC = currentCursors.find((c) => c.id === id);
+        if (
+          !oldC ||
+          oldC.x !== newC.x ||
+          oldC.y !== newC.y ||
+          oldC.color !== newC.color ||
+          oldC.userName !== newC.userName
+        ) {
+          hasChanges = true;
+          break;
+        }
+      }
+
+      // Вызываем setState ТОЛЬКО если данные реально изменились
+      if (hasChanges) {
+        useBoardStore.setState({ cursors: Array.from(newCursorsMap.values()) });
+      }
     };
 
-    provider.shapes.observe(shapesObserver);
+    // 🔥 Подписки
+    provider.shapes.observeDeep(shapesObserver);
+    initializeExistingShapes();
     provider.connections.observe(connectionsObserver);
     provider.awareness.on("update", awarenessObserver);
 
-    // === 2. Zustand → Yjs (отправка локальных изменений) ===
+    // === 2. Zustand → Yjs ===
 
     useBoardStore.setState({
       addShape: (shape: Shape) => {
@@ -213,23 +338,50 @@ export const useYjsSync = (boardId: string, userId: string, userName: string) =>
       },
     });
 
-    // === 3. Отслеживание курсора текущего пользователя ===
+    // === 3. Курсор ===
+    let lastCursorUpdate = 0;
+    let lastSentX = -1000;
+    let lastSentY = -1000;
+
     const handleMouseMove = (e: MouseEvent) => {
-      const stage = document.querySelector(".konvajs-content");
+      if (document.hidden) return;
+
+      const now = Date.now();
+      if (now - lastCursorUpdate < 50) return;
+
+      const stage = document.querySelector(".konvajs-content") as HTMLElement | null;
       if (!stage) return;
 
       const rect = stage.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
+      // Мертвая зона: игнорируем микро-движения менее 1 пикселя
+      if (Math.abs(x - lastSentX) < 1 && Math.abs(y - lastSentY) < 1) {
+        return;
+      }
+
+      lastSentX = x;
+      lastSentY = y;
+      lastCursorUpdate = now;
+
       provider.awareness.setLocalStateField("cursor", { x, y });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
 
-    // === ОЧИСТКА ===
+    // 🔥 Очистка
     return () => {
-      provider.shapes.unobserve(shapesObserver);
+      // 🔥 ИСПРАВЛЕНО 2: Явно удаляем своё состояние awareness при закрытии/перезагрузке вкладки.
+      // Это заставляет курсор исчезнуть НЕМЕДЛЕННО, а не висеть 30 секунд до таймаута Yjs.
+      provider.awareness.setLocalState(null);
+
+      provider.shapes.unobserveDeep(shapesObserver);
+      shapeObserversRef.current.forEach((observer, key) => {
+        const yMap = provider.shapes.get(key) as Y.Map<unknown> | undefined;
+        if (yMap) yMap.unobserve(observer);
+      });
+      shapeObserversRef.current.clear();
       provider.connections.unobserve(connectionsObserver);
       provider.awareness.off("update", awarenessObserver);
       window.removeEventListener("mousemove", handleMouseMove);

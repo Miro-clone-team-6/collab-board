@@ -465,16 +465,15 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
             cursor: isPanning ? "grabbing" : tool === "select" ? "default" : "crosshair",
           }}
         >
+          {/* ── СЛОЙ 1: Статика (фон + связи). Не интерактивный ── */}
           <Layer listening={false}>
             <Rect x={-5000} y={-5000} width={10000} height={10000} fill="#f9fafb" />
-          </Layer>
-
-          <Layer listening={false}>
             {connections.map((conn) => (
               <ArrowRenderer key={conn.id} connection={conn} />
             ))}
           </Layer>
 
+          {/* ── СЛОЙ 2: Основной интерактив (фигуры + Transformer) ── */}
           <Layer>
             {shapes.map((shape) => {
               if (shape.type === "comment") {
@@ -488,8 +487,13 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
                 />
               );
             })}
+
+            {/* 🔥 Перенесено сюда: Transformer должен получать события мыши,
+                иначе ресайз за уголки не работает */}
+            <SelectionTransformer />
           </Layer>
 
+          {/* ── СЛОЙ 3: Оверлей рисования (черновик, рамка, стрелка) ── */}
           <Layer listening={false}>
             {draftShape && draftShape.id === "draft" && draftShape.type === "rect" && (
               <Rect {...draftShape} />
@@ -508,7 +512,6 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
                 stroke="#3b82f6"
                 strokeWidth={1}
                 dash={[4, 4]}
-                listening={false}
               />
             )}
 
@@ -531,16 +534,12 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
                     stroke="#6b7280"
                     strokeWidth={2}
                     dash={[5, 5]}
-                    listening={false}
                   />
                 );
               })()}
           </Layer>
 
-          <Layer listening={false}>
-            <SelectionTransformer />
-          </Layer>
-
+          {/* ── СЛОЙ 4: Курсоры (обновляются чаще всего — держим отдельно) ── */}
           <CursorsLayer />
         </Stage>
 
