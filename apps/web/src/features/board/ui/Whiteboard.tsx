@@ -4,15 +4,15 @@ import Konva from "konva";
 import { nanoid } from "nanoid";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Circle, Layer, Line, Rect, Stage } from "react-konva";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-// Realtime
-import { useYjsSync } from "../hooks/useYjsSync";
-import { useBoardStore } from "../store/boardStore";
-// Types & Store
-import type { Shape } from "../types";
 // Utils
-import { getWorldPosition } from "../utils/coordinates";
-import { exportToPNG } from "../utils/export";
+import { getWorldPosition } from "../lib/coordinates";
+import { exportToPNG } from "../lib/export";
+import { useBoardStore } from "../model/boardStore";
+import { useKeyboardShortcuts } from "../model/hooks/useKeyboardShortcuts";
+// Realtime
+import { useYjsSync } from "../model/hooks/useYjsSync";
+// Types & Store
+import type { Shape } from "../model/types";
 import { ArrowRenderer } from "./ArrowRenderer";
 import { CommentMarker } from "./CommentMarker";
 import { CursorsLayer } from "./CursorsLayer";
@@ -112,7 +112,9 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
       if (stageRef.current) {
         clearSelection();
         setTimeout(() => {
-          exportToPNG(stageRef.current!, "whiteboard.png");
+          if (stageRef.current) {
+            exportToPNG(stageRef.current, "whiteboard.png");
+          }
         }, 100);
       }
     };
@@ -340,6 +342,7 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
       if (selectionBox.width < 5 && selectionBox.height < 5) {
         clearSelection();
       } else {
+        const box = selectionBox;
         const intersectingIds = shapes
           .filter((s) => {
             let sx = s.x;
@@ -347,21 +350,31 @@ export const Whiteboard: React.FC<WhiteboardProps> = ({ width = 1200, height = 7
             let sw = 0;
             let sh = 0;
 
+            // 🔥 ИСПРАВЛЕНО: Безопасное приведение типа БЕЗ использования 'any'
+            // И мы переименовали переменную в typedShape, чтобы Biome не ругался, что она не используется
+            const typedShape = s as unknown as {
+              width?: number;
+              height?: number;
+              radius?: number;
+              fontSize?: number;
+            };
+
             if ("width" in s) {
-              sw = s.width;
-              sh = "height" in s ? (s as any).height : (s as any).fontSize || 20;
+              sw = typedShape.width || 0;
+              sh = typedShape.height || typedShape.fontSize || 20;
             } else if ("radius" in s) {
-              sw = (s as any).radius * 2;
-              sh = (s as any).radius * 2;
-              sx -= (s as any).radius;
-              sy -= (s as any).radius;
+              const r = typedShape.radius || 0;
+              sw = r * 2;
+              sh = r * 2;
+              sx -= r;
+              sy -= r;
             }
 
             return (
-              sx < selectionBox?.x + selectionBox?.width &&
-              sx + sw > selectionBox?.x &&
-              sy < selectionBox?.y + selectionBox?.height &&
-              sy + sh > selectionBox?.y
+              sx < box.x + box.width &&
+              sx + sw > box.x &&
+              sy < box.y + box.height &&
+              sy + sh > box.y
             );
           })
           .map((s) => s.id);

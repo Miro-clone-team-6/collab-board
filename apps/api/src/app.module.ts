@@ -7,6 +7,7 @@ import { httpConfig } from "./config/http.config.js";
 import { HttpExceptionFilter } from "./errors/http-exception.filter.js";
 import { HealthModule } from "./modules/health/health.module.js";
 import { UsersModule } from "./modules/users/users.module.js";
+import { WhiteboardModule } from "./modules/whiteboard/whiteboard.module.js";
 import { PrismaModule } from "./prisma/prisma.module.js";
 
 @Module({
@@ -19,6 +20,7 @@ import { PrismaModule } from "./prisma/prisma.module.js";
     PrismaModule,
     HealthModule,
     UsersModule,
+    WhiteboardModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }],
 })

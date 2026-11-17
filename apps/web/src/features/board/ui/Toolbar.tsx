@@ -3,8 +3,8 @@
 "use client";
 
 import React from "react";
-import { useBoardStore } from "../store/boardStore";
-import type { ToolType } from "../types";
+import { useBoardStore } from "../model/boardStore";
+import type { ToolType } from "../model/types";
 
 const TOOLS: { id: ToolType; icon: string; label: string }[] = [
   { id: "select", icon: "🖱️", label: "Выделение (V)" },
@@ -40,6 +40,7 @@ export const Toolbar: React.FC = () => {
           key={t.id}
           onClick={() => setTool(t.id)}
           title={t.label}
+          type="button"
           className={`
             w-10 h-10 flex items-center justify-center rounded-lg text-lg
             transition-colors border
@@ -60,6 +61,7 @@ export const Toolbar: React.FC = () => {
         onClick={groupSelected}
         disabled={selectedIds.length < 2}
         title="Группировать (Ctrl+G)"
+        type="button"
         className="px-3 h-10 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         🗂️ Группировать
@@ -67,9 +69,15 @@ export const Toolbar: React.FC = () => {
 
       {/* 👇 НОВАЯ КНОПКА: Разгруппировать */}
       <button
-        onClick={() => isGroupSelected && ungroup(selectedIds[0])}
+        onClick={() => {
+          const id = selectedIds[0];
+          if (id && isGroupSelected) {
+            ungroup(id);
+          }
+        }}
         disabled={!isGroupSelected}
         title="Разгруппировать (Ctrl+Shift+G)"
+        type="button"
         className="px-3 h-10 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         📂 Разгруппировать
@@ -78,6 +86,7 @@ export const Toolbar: React.FC = () => {
       <button
         onClick={handleExport}
         title="Экспорт в PNG"
+        type="button"
         className="px-3 h-10 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors"
       >
         📥 Экспорт

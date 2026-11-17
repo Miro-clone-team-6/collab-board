@@ -1,4 +1,4 @@
-import { Whiteboard } from '@/features/board/ui/Whiteboard';
+import { Whiteboard } from "@/features/board/ui/Whiteboard";
 
 export default function WhiteboardPage() {
   return (

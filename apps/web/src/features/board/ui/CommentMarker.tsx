@@ -4,8 +4,8 @@
 
 import React from "react";
 import { Circle, Group, Text } from "react-konva";
-import { useBoardStore } from "../store/boardStore";
-import type { CommentShape } from "../types";
+import { useBoardStore } from "../model/boardStore";
+import type { CommentShape } from "../model/types";
 
 interface CommentMarkerProps {
   shape: CommentShape;

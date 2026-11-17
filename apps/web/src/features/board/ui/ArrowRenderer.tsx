@@ -4,9 +4,9 @@
 
 import React from "react";
 import { Arrow, Label, Tag, Text } from "react-konva";
-import { useBoardStore } from "../store/boardStore";
-import type { Connection } from "../types";
-import { getConnectionPoints } from "../utils/anchors";
+import { getConnectionPoints } from "../lib/anchors";
+import { useBoardStore } from "../model/boardStore";
+import type { Connection } from "../model/types";
 
 interface ArrowRendererProps {
   connection: Connection;

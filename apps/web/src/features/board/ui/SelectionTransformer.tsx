@@ -3,8 +3,8 @@
 import Konva from "konva";
 import React, { useEffect, useRef } from "react";
 import { Transformer } from "react-konva";
-import { useBoardStore } from "../store/boardStore";
-import type { Shape } from "../types";
+import { useBoardStore } from "../model/boardStore";
+import type { Shape } from "../model/types";
 
 export const SelectionTransformer: React.FC = () => {
   const selectedIds = useBoardStore((s) => s.selectedIds);

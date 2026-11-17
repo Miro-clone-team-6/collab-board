@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
+import { useBoardStore } from "../boardStore";
 import { getYjsProvider, YjsSocketProvider } from "../realtime/yjsProvider";
-import { useBoardStore } from "../store/boardStore";
 // Типы приложения (Zustand / React)
 import type { Connection, Cursor, Shape } from "../types";
 // Типы для внутреннего устройства Yjs

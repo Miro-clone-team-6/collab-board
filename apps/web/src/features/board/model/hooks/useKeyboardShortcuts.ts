@@ -1,7 +1,7 @@
 // src/features/board/hooks/useKeyboardShortcuts.ts
 
 import { useEffect } from "react";
-import { useBoardStore } from "../store/boardStore";
+import { useBoardStore } from "../boardStore";
 
 export function useKeyboardShortcuts() {
   const selectedIds = useBoardStore((s) => s.selectedIds);

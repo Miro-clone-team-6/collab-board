@@ -22,7 +22,7 @@ export class YjsSocketProvider {
 
   private socket: Socket;
   public config: YjsConfig;
-  private isSynced = false;
+  //private isSynced = false;
 
   constructor(config: YjsConfig) {
     this.config = config;
@@ -66,7 +66,7 @@ export class YjsSocketProvider {
 
     this.socket.on("yjs-sync", (update: Uint8Array) => {
       Y.applyUpdate(this.doc, update, "socketio");
-      this.isSynced = true;
+      //this.isSynced = true;
     });
 
     this.socket.on("yjs-update", (update: Uint8Array) => {
@@ -88,14 +88,14 @@ export class YjsSocketProvider {
           this.awareness.getStates().get(clientId),
         ]);
         this.socket.emit("awareness-update", awarenessStates);
-      }
+      },
     );
 
     // 🔥 ИСПРАВЛЕНО: Принимаем unknown, затем безопасно приводим к типу кортежа
     this.socket.on("awareness-update", (updates: unknown) => {
       const typedUpdates = updates as [number, Record<string, unknown> | null][];
       const states = this.awareness.getStates();
-      
+
       typedUpdates.forEach(([clientId, state]) => {
         if (state === null) {
           states.delete(clientId);
@@ -103,7 +103,7 @@ export class YjsSocketProvider {
           states.set(clientId, state);
         }
       });
-      
+
       this.awareness.emit("update", [
         {
           added: [],
@@ -115,7 +115,7 @@ export class YjsSocketProvider {
 
     this.socket.on("disconnect", () => {
       console.log("❌ Disconnected from Yjs server");
-      this.isSynced = false;
+      //this.isSynced = false;
     });
   }
 

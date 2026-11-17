@@ -2,11 +2,12 @@
 
 "use client";
 
+import Konva from "konva";
 import React from "react";
 import { Image, Rect } from "react-konva";
 import useImage from "use-image";
-import { useBoardStore } from "../../store/boardStore";
-import type { ImageShape } from "../../types";
+import { useBoardStore } from "../../model/boardStore";
+import type { ImageShape } from "../../model/types";
 
 interface ImageRendererProps {
   shape: ImageShape;
@@ -20,7 +21,7 @@ export const ImageRenderer: React.FC<ImageRendererProps> = React.memo(({ shape, 
 
   const handleClick = () => selectShape(shape.id);
 
-  const handleDragEnd = (e: any) => {
+  const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
     updateShape(shape.id, {
       x: e.target.x(),
       y: e.target.y(),

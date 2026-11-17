@@ -2,10 +2,11 @@
 
 "use client";
 
+import Konva from "konva";
 import React from "react";
 import { Group, Rect, Text } from "react-konva";
-import { useBoardStore } from "../../store/boardStore";
-import type { StickyShape } from "../../types";
+import { useBoardStore } from "../../model/boardStore";
+import type { StickyShape } from "../../model/types";
 
 interface StickyNoteProps {
   shape: StickyShape;
@@ -18,7 +19,7 @@ export const StickyNote: React.FC<StickyNoteProps> = React.memo(({ shape, isSele
 
   const handleClick = () => selectShape(shape.id);
 
-  const handleDragEnd = (e: any) => {
+  const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
     updateShape(shape.id, {
       x: e.target.x(),
       y: e.target.y(),

@@ -1,6 +1,6 @@
 // src/features/board/utils/anchors.ts
 
-import type { Shape } from "../types";
+import type { Shape } from "../model/types";
 
 // Возвращает 4 точки привязки фигуры (верх, право, низ, лево)
 export function getAnchorPoints(shape: Shape): { x: number; y: number }[] {

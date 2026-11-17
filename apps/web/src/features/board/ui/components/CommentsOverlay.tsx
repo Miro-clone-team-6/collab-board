@@ -1,10 +1,8 @@
-// src/features/board/ui/CommentsOverlay.tsx
-
 "use client";
 
 import React from "react";
-import { useBoardStore } from "../../store/boardStore";
-import type { CommentShape } from "../../types/index";
+import { useBoardStore } from "../../model/boardStore";
+import type { CommentShape } from "../../model/types/index";
 
 export const CommentsOverlay: React.FC = () => {
   const shapes = useBoardStore((s) => s.shapes);
@@ -25,18 +23,17 @@ export const CommentsOverlay: React.FC = () => {
         const text = typeof comment.text === "string" ? comment.text : "Комментарий";
 
         return (
-          <div
+          <button
+            type="button"
             key={comment.id}
-            className="absolute bg-white rounded-lg shadow-xl p-3 w-64 border border-gray-200 z-50"
-            style={{
-              left: comment.x + 20,
-              top: comment.y,
-            }}
+            className="absolute z-50 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-3 text-left"
+            style={{ top: comment.y, left: comment.x }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="font-bold text-sm text-gray-900">{author}</div>
               <button
+                type="button"
                 className="text-gray-400 hover:text-gray-600 text-xs"
                 onClick={() => closeComment(comment.id)}
                 aria-label="Закрыть комментарий"
@@ -45,7 +42,7 @@ export const CommentsOverlay: React.FC = () => {
               </button>
             </div>
             <div className="text-sm text-gray-700 break-words">{text}</div>
-          </div>
+          </button>
         );
       })}
     </>

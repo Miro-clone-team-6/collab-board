@@ -4,7 +4,7 @@
 
 import React from "react";
 import { Group, Path, Text } from "react-konva";
-import { useBoardStore } from "../store/boardStore";
+import { useBoardStore } from "../model/boardStore";
 
 export const CursorsLayer: React.FC = () => {
   const cursors = useBoardStore((s) => s.cursors);

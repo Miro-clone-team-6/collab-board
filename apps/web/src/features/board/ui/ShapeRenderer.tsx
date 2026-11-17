@@ -1,9 +1,9 @@
 "use client";
-
+import Konva from "konva";
 import React from "react";
 import { Circle, Group, Rect, Text } from "react-konva";
-import { useBoardStore } from "../store/boardStore";
-import type { Shape } from "../types";
+import { useBoardStore } from "../model/boardStore";
+import type { Shape } from "../model/types";
 import { ImageRenderer } from "./components/ImageRenderer";
 import { StickyNote } from "./components/StickyNote";
 
@@ -20,10 +20,10 @@ export const ShapeRenderer: React.FC<ShapeRendererProps> = React.memo(({ shape, 
     selectShape(shape.id);
   };
 
-  const handleDragEnd = (e: any) => {
-    const node = e.target;
+  const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
+    const node = e.target as Konva.Node;
     // Формируем объект обновления динамически
-    const updatePayload: any = {
+    const updatePayload: { x: number; y: number; rotation?: number } = {
       x: node.x(),
       y: node.y(),
     };
@@ -96,7 +96,7 @@ export const ShapeRenderer: React.FC<ShapeRendererProps> = React.memo(({ shape, 
           draggable
           onClick={handleClick}
           onTap={handleClick}
-          onDragEnd={(e: any) => {
+          onDragEnd={(e: Konva.KonvaEventObject<DragEvent>) => {
             const node = e.target;
             updateShape(shape.id, {
               x: node.x(),

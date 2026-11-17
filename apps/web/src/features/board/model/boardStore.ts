@@ -2,7 +2,7 @@
 
 import { nanoid } from "nanoid";
 import { create } from "zustand";
-import type { Connection, Cursor, Shape, ToolType } from "../types";
+import type { Connection, Cursor, Shape, ToolType } from "./types";
 
 interface BoardState {
   // Состояние
@@ -138,23 +138,23 @@ export const useBoardStore = create<BoardState>((set, _get) => ({
 
   ungroup: (groupId) =>
     set((state) => {
-      const group = state.shapes.find((s) => s.id === groupId) as any;
-      if (group?.type !== "group") return state;
+      // Безопасное приведение типа вместо any
+      const group = state.shapes.find((s) => s.id === groupId) as unknown as
+        | { type: "group"; children: Shape[]; x: number; y: number }
+        | undefined;
 
-      // Делаем координаты детей снова абсолютными
-      const absoluteChildren = group.children.map((child: any) => ({
+      if (!group || group.type !== "group") return state;
+
+      // Делаем координаты детей снова абсолютными (child теперь строго Shape)
+      const absoluteChildren = group.children.map((child: Shape) => ({
         ...child,
         x: child.x + group.x,
         y: child.y + group.y,
       }));
 
       return {
-        shapes: [
-          // <-- ИСПРАВЛЕНО: удаляем только саму группу, сохраняя все остальные фигуры на холсте
-          ...state.shapes.filter((s) => s.id !== groupId),
-          ...absoluteChildren, // Возвращаем детей на холст
-        ],
-        selectedIds: absoluteChildren.map((c: any) => c.id),
+        shapes: [...state.shapes.filter((s) => s.id !== groupId), ...absoluteChildren],
+        selectedIds: absoluteChildren.map((c: Shape) => c.id),
       };
     }),
 
