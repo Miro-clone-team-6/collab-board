@@ -101,6 +101,32 @@
   --color-sticky-pink: #fbcfe8;
   --color-sticky-purple: #e9d5ff;
   --color-sticky-orange: #fed7aa;
+  /* Transition из дизайн-системы */
+  --transition-fast: 120ms ease-out;
+
+  /* Sticker palette (6 цветов) */
+  --color-sticky-yellow: #fef08a;
+  --color-sticky-pink: #fbcfe8;
+  --color-sticky-blue: #bae6fd;
+  --color-sticky-green: #bbf7d0;
+  --color-sticky-purple: #e9d5ff;
+  --color-sticky-orange: #fed7aa;
+
+  /* AI accent */
+  --color-ai-accent: #8b5cf6;
+  --color-ai-background: #f5f3ff;
+
+  /* Tag colors для тегов */
+  --color-tag-strategy: #f3e8ff;
+  --color-tag-strategy-text: #7e22ce;
+  --color-tag-design: #f1f5f9;
+  --color-tag-design-text: #475569;
+  --color-tag-engineering: #dbeafe;
+  --color-tag-engineering-text: #1d4ed8;
+  --color-tag-roadmap: #f3e8ff;
+  --color-tag-roadmap-text: #7e22ce;
+  --color-tag-scrum: #dbeafe;
+  --color-tag-scrum-text: #1d4ed8;
 }
 
 @layer base {
@@ -122,5 +148,14 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Стандартная анимация для интерактивных элементов */
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    transition: var(--transition-fast);
   }
 }
