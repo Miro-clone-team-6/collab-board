@@ -49,7 +49,7 @@ export function connectExcalidrawRoom(
 ) {
   const url = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001");
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-  url.pathname = "/research/excalidraw";
+  url.pathname = "/board-sync";
   url.search = "";
   url.hash = "";
 
@@ -65,7 +65,7 @@ export function connectExcalidrawRoom(
 
   function expectedElements() {
     const elements = new Map([...confirmed].map(([id, entry]) => [id, entry.element]));
-    // Keep an unacknowledged deletion hidden while it can still be retried.
+    // Пока удаление можно повторить, элемент остаётся скрытым.
     if (
       pending &&
       (pending.retryDeletion ||
@@ -130,7 +130,7 @@ export function connectExcalidrawRoom(
       if (!ready || pending || socket.readyState !== WebSocket.OPEN) return;
       const drafts = readDrafts();
       const first = drafts[0];
-      // A rejected packet must not discard changes to another sticker.
+      // Конфликт одного стикера не должен откатывать изменения другого.
       const elements = first ? drafts.filter((draft) => stickerId(draft) === stickerId(first)) : [];
       const referencedFiles = new Set<string>(
         [...elements, ...Array.from(confirmed.values(), ({ element }) => element)].flatMap(
@@ -184,7 +184,7 @@ export function connectExcalidrawRoom(
       }
     }
 
-    // A peer update can discard the local Undo before the rejection of the delete arrives.
+    // Входящая правка может убрать локальный результат Undo до отказа сервера в удалении.
     if (
       pending?.retryDeletion &&
       pending.changes.some(({ element }) =>
@@ -199,7 +199,7 @@ export function connectExcalidrawRoom(
       pending.retryDeletion = false;
     }
 
-    // Keep unrelated drafts. A queued deletion can be reapplied to the new revision.
+    // Если входящая правка затронула ожидающее отправки удаление, применяем его к новой версии.
     const remaining: ExcalidrawElement[] = [];
     for (const element of drafts) {
       if (!touchesSticker(element, incomingIds)) {
@@ -215,7 +215,6 @@ export function connectExcalidrawRoom(
       clearTimeout(responseTimer);
       const rejected = pending;
       pending = undefined;
-      // Retry only a pure deletion, once, against the revisions returned by the server.
       const deletions = rejected?.retryDeletion
         ? rejected.changes.flatMap(({ element }) => {
             const current = confirmed.get(element.id)?.element;

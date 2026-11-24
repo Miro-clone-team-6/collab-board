@@ -8,11 +8,13 @@
 
 ## Устройство
 
-`apps/web/app/research/excalidraw/page.tsx` реэкспортирует страницу из `apps/web/src/_pages/research-excalidraw/`.
+`apps/web/app/board/page.tsx` реэкспортирует страницу из `apps/web/src/_pages/board/`.
 Страница задаёт высоту `100dvh`; редактор получает остаток под заголовком и панелью через flex и `min-h-0`.
 
-Клиентский `ExcalidrawLoader` использует `next/dynamic` с `ssr: false` из-за браузерных API.
-CSS подключён в `ExcalidrawEditor.tsx`, тема — через `next-themes`. Основные страницы не изменены.
+Виджет `apps/web/src/widgets/board-editor` экспортирует клиентский `BoardEditor`.
+Он загружает `ExcalidrawEditor` через `next/dynamic` с `ssr: false` из-за браузерных API.
+CSS подключён в `ui/ExcalidrawEditor.tsx`, тема — через `next-themes`.
+Состояние и транспорт Sync v2 находятся в `model/excalidraw-room.ts` того же виджета.
 
 Frontend использует `@excalidraw/excalidraw`, backend — `@nestjs/websockets` и `@nestjs/platform-ws`.
 Пакет поддерживает React 19, но транзитивный `@radix-ui/react-tabs` и часть его зависимостей
@@ -24,11 +26,11 @@ Frontend использует `@excalidraw/excalidraw`, backend — `@nestjs/web
 
    ```bash
    pnpm install
-   pnpm --filter api dev:excalidraw
+   pnpm --filter api dev:board-sync
    ```
 
 2. В другом терминале выполнить `pnpm dev:web`. Открыть две вкладки
-   `http://localhost:3000/research/excalidraw`, дождаться статуса подключения WebSocket.
+   `http://localhost:3000/board`, дождаться статуса подключения WebSocket.
    Команда API собирает и запускает Nest только с Gateway, без Prisma и PostgreSQL, на порту 3001.
    Одновременно обычный API на этом порту запускать не нужно.
 3. Нажать «Добавить стикер»: появится жёлтый прямоугольник с привязанным текстом.
@@ -60,7 +62,8 @@ Frontend использует `@excalidraw/excalidraw`, backend — `@nestjs/web
 
 `ExcalidrawEditor.tsx` получает API через `excalidrawAPI`. Сохранение вызывает `getSceneElements`,
 `getAppState`, `getFiles`, затем `serializeAsJSON(elements, appState, files, "local")`.
-JSON с изображениями попадает в localStorage под ключом `collab-board:research:excalidraw:scene:v1`.
+JSON с изображениями попадает в localStorage под ключом `collab-board:excalidraw:scene:v1`.
+Снимки из исследовательского маршрута остаются под прежним ключом и автоматически не переносятся.
 
 Восстановление разбирает JSON через `loadFromBlob`, помечает отсутствующие в сохранении
 элементы как удалённые, вызывает `addFiles` и `updateScene` с `CaptureUpdateAction.NEVER`,
@@ -77,13 +80,13 @@ Undo/Redo, выделение и камера в локальном снимке
 
 ## Realtime для collab-board
 
-`apps/api/src/modules/research-excalidraw/excalidraw.gateway.ts` хранит одну фиксированную комнату
-в памяти. Только `src/research-excalidraw.ts` регистрирует Gateway и `WsAdapter` в отдельном
-исследовательском Nest-модуле без БД. Он запускается командой `pnpm --filter api dev:excalidraw`.
+`apps/api/src/modules/boards/board-sync.gateway.ts` хранит одну фиксированную комнату в памяти.
+`apps/api/src/board-sync.ts` регистрирует Gateway и `WsAdapter` в отдельном Nest-модуле без БД.
+Он запускается командой `pnpm --filter api dev:board-sync`.
 Обычные `dev`, `start` и запуск `dist/main.js` используют `AppModule` без исследовательского Gateway
 и без настройки `WsAdapter`.
 Это исследовательское исключение из обычного HTTP-прокси приложения: браузер подключается
-напрямую к `/research/excalidraw` API через native WebSocket. Адрес берётся из `NEXT_PUBLIC_API_URL`
+напрямую к `/board-sync` API через native WebSocket. Адрес берётся из `NEXT_PUBLIC_API_URL`
 (по умолчанию `http://localhost:3001`), протокол преобразуется в `ws`/`wss`.
 
 При подключении сервер отправляет `snapshot` с элементами, их ревизиями и файлами. Затем

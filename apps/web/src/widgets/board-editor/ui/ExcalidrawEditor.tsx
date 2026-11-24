@@ -13,10 +13,10 @@ import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Button } from "@/shared/ui/button";
-import { connectExcalidrawRoom } from "./excalidraw-room";
+import { connectExcalidrawRoom } from "../model/excalidraw-room";
 import "@excalidraw/excalidraw/index.css";
 
-const STORAGE_KEY = "collab-board:research:excalidraw:scene:v1";
+const STORAGE_KEY = "collab-board:excalidraw:scene:v1";
 
 export default function ExcalidrawEditor() {
   const [api, setApi] = useState<ExcalidrawImperativeAPI | null>(null);
@@ -81,7 +81,6 @@ export default function ExcalidrawEditor() {
         setMessage("В этом браузере нет сохранённой сцены.");
         return;
       }
-      // Parse and restore before replacing the current scene.
       const scene = await loadFromBlob(new Blob([json], { type: "application/json" }), null, null);
       const restored = scene.elements ?? [];
       const restoredIds = new Set(restored.map((element) => element.id));

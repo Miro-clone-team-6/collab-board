@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nest start --watch",
-    "dev:excalidraw": "pnpm build && node dist/research-excalidraw.js",
+    "dev:board-sync": "pnpm build && node dist/board-sync.js",
     "build": "nest build",
     "postinstall": "prisma generate",
     "start": "nest start",

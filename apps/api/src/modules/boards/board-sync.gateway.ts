@@ -22,8 +22,8 @@ const patchSchema = z.object({
 type VersionedElement = { element: z.infer<typeof elementSchema>; revision: number };
 type Peer = { readyState: number; send: (message: string) => void };
 
-@WebSocketGateway({ path: "/research/excalidraw" })
-export class ExcalidrawGateway implements OnGatewayConnection {
+@WebSocketGateway({ path: "/board-sync" })
+export class BoardSyncGateway implements OnGatewayConnection {
   @WebSocketServer()
   server!: { clients: Set<Peer> };
 
@@ -50,7 +50,7 @@ export class ExcalidrawGateway implements OnGatewayConnection {
 
     const { changes, files } = result.data;
     const ids = new Set(changes.map(({ element }) => element.id));
-    // Apply the packet atomically so a sticker and its bound text can change together.
+    // Пакет применяется атомарно, чтобы стикер и его подпись менялись вместе.
     if (
       ids.size !== changes.length ||
       changes.some(

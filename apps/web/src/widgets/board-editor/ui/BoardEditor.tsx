@@ -7,6 +7,6 @@ const ExcalidrawEditor = dynamic(() => import("./ExcalidrawEditor"), {
   loading: () => <output className="p-4">Загрузка редактора…</output>,
 });
 
-export function ExcalidrawLoader() {
+export function BoardEditor() {
   return <ExcalidrawEditor />;
 }

@@ -1,6 +1,6 @@
-import { ExcalidrawLoader } from "./ExcalidrawLoader";
+import { BoardEditor } from "@/widgets/board-editor";
 
-export function ResearchExcalidrawPage() {
+export function BoardPage() {
   return (
     <main className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <header className="shrink-0 border-b border-border px-4 py-2">
@@ -11,7 +11,7 @@ export function ResearchExcalidrawPage() {
         </p>
       </header>
       <div className="relative min-h-0 flex-1">
-        <ExcalidrawLoader />
+        <BoardEditor />
       </div>
     </main>
   );
