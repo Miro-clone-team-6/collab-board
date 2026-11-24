@@ -5,14 +5,15 @@ import {
   convertToExcalidrawElements,
   Excalidraw,
   loadFromBlob,
+  newElementWith,
   serializeAsJSON,
   viewportCoordsToSceneCoords,
 } from "@excalidraw/excalidraw";
-import type { ExcalidrawElement } from "@excalidraw/excalidraw/element/types";
-import type { BinaryFiles, ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Button } from "@/shared/ui/button";
+import { connectExcalidrawRoom } from "./excalidraw-room";
 import "@excalidraw/excalidraw/index.css";
 
 const STORAGE_KEY = "collab-board:research:excalidraw:scene:v1";
@@ -25,58 +26,7 @@ export default function ExcalidrawEditor() {
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
-    if (!api) return;
-    const url = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001");
-    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    url.pathname = "/research/excalidraw";
-    url.search = "";
-    url.hash = "";
-    const socket = new WebSocket(url);
-    let ready = false;
-    let applyingRemote = false;
-    let lastScene = "";
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data) as {
-        event: string;
-        data: { elements: ExcalidrawElement[]; files: BinaryFiles };
-      };
-      if (message.event !== "scene") return;
-      applyingRemote = true;
-      api.addFiles(Object.values(message.data.files));
-      api.updateScene({
-        elements: message.data.elements,
-        captureUpdate: CaptureUpdateAction.NEVER,
-      });
-      lastScene = JSON.stringify({
-        elements: api.getSceneElementsIncludingDeleted(),
-        files: api.getFiles(),
-      });
-      applyingRemote = false;
-      ready = true;
-      setConnection("WebSocket: общая тестовая комната подключена");
-    };
-    socket.onclose = () => {
-      ready = false;
-      setConnection(
-        "WebSocket отключён. Запустите API и обновите страницу; локальные правки не передаются.",
-      );
-    };
-    socket.onerror = () => setConnection("Ошибка WebSocket. Проверьте запуск API на порту 3001.");
-    const unsubscribe = api.onChange((elements, _appState, files) => {
-      if (!ready || applyingRemote || socket.readyState !== WebSocket.OPEN) return;
-      const scene = JSON.stringify({ elements, files });
-      if (scene === lastScene) return;
-      lastScene = scene;
-      socket.send(`{"event":"scene","data":${scene}}`);
-    });
-    return () => {
-      ready = false;
-      unsubscribe();
-      socket.onclose = null;
-      socket.onerror = null;
-      socket.onmessage = null;
-      socket.close();
-    };
+    if (api) return connectExcalidrawRoom(api, setConnection);
   }, [api]);
 
   function addSticky() {
@@ -133,9 +83,18 @@ export default function ExcalidrawEditor() {
       }
       // Parse and restore before replacing the current scene.
       const scene = await loadFromBlob(new Blob([json], { type: "application/json" }), null, null);
-      api.resetScene();
+      const restored = scene.elements ?? [];
+      const restoredIds = new Set(restored.map((element) => element.id));
+      const deleted = api
+        .getSceneElementsIncludingDeleted()
+        .filter((element) => !restoredIds.has(element.id))
+        .map((element) => newElementWith(element, { isDeleted: true }));
       api.addFiles(Object.values(scene.files ?? {}));
-      api.updateScene({ ...scene, captureUpdate: CaptureUpdateAction.NEVER });
+      api.updateScene({
+        ...scene,
+        elements: [...restored, ...deleted],
+        captureUpdate: CaptureUpdateAction.NEVER,
+      });
       api.history.clear();
       setMessage("Сохранённая сцена восстановлена. История Undo/Redo начата заново.");
     } catch {

@@ -8,12 +8,18 @@ import {
 } from "@nestjs/websockets";
 import { z } from "zod";
 
-// One disposable room. The last received whole-scene snapshot wins.
-const sceneSchema = z.object({
-  elements: z.array(z.looseObject({ id: z.string() })),
+const elementSchema = z.looseObject({ id: z.string(), isDeleted: z.boolean() });
+const patchSchema = z.object({
+  changes: z.array(
+    z.object({
+      baseRevision: z.int().positive().nullable(),
+      element: elementSchema,
+    }),
+  ),
   files: z.record(z.string(), z.unknown()),
 });
 
+type VersionedElement = { element: z.infer<typeof elementSchema>; revision: number };
 type Peer = { readyState: number; send: (message: string) => void };
 
 @WebSocketGateway({ path: "/research/excalidraw" })
@@ -21,20 +27,54 @@ export class ExcalidrawGateway implements OnGatewayConnection {
   @WebSocketServer()
   server!: { clients: Set<Peer> };
 
-  private scene: z.infer<typeof sceneSchema> = { elements: [], files: {} };
+  private readonly elements = new Map<string, VersionedElement>();
+  private readonly files: Record<string, unknown> = Object.create(null);
+  private revision = 0;
 
   handleConnection(client: Peer) {
-    client.send(JSON.stringify({ event: "scene", data: this.scene }));
+    client.send(
+      JSON.stringify({
+        event: "snapshot",
+        data: { elements: [...this.elements.values()], files: this.files },
+      }),
+    );
   }
 
-  @SubscribeMessage("scene")
+  @SubscribeMessage("patch")
   updateScene(@MessageBody() data: unknown, @ConnectedSocket() sender: Peer) {
-    const result = sceneSchema.safeParse(data);
-    if (!result.success) return;
-    this.scene = result.data;
-    const message = JSON.stringify({ event: "scene", data: this.scene });
+    const result = patchSchema.safeParse(data);
+    if (!result.success) {
+      sender.send(JSON.stringify({ event: "conflict", data: { elements: [] } }));
+      return;
+    }
+
+    const { changes, files } = result.data;
+    const ids = new Set(changes.map(({ element }) => element.id));
+    // Apply the packet atomically so a sticker and its bound text can change together.
+    if (
+      ids.size !== changes.length ||
+      changes.some(
+        ({ element, baseRevision }) =>
+          (this.elements.get(element.id)?.revision ?? null) !== baseRevision,
+      )
+    ) {
+      const elements = [...ids].flatMap((id) => this.elements.get(id) ?? []);
+      sender.send(JSON.stringify({ event: "conflict", data: { elements } }));
+      return;
+    }
+
+    const revision = ++this.revision;
+    const elements = changes.map(({ element }) => {
+      const entry = { element, revision };
+      this.elements.set(element.id, entry);
+      return entry;
+    });
+    Object.assign(this.files, files);
+    const patch = { elements, files };
+    const broadcast = JSON.stringify({ event: "patch", data: patch });
+    const acknowledgement = JSON.stringify({ event: "patch", data: { ...patch, own: true } });
     for (const client of this.server.clients) {
-      if (client !== sender && client.readyState === 1) client.send(message);
+      if (client.readyState === 1) client.send(client === sender ? acknowledgement : broadcast);
     }
   }
 }
