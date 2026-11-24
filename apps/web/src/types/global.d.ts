@@ -6,7 +6,7 @@ declare module "*.css" {
 
 // Объявление для side-effect импортов (импорт без использования экспорта)
 declare module "*.css" {
-  const content: any;
+  const content: Record<string, string>;
   export default content;
 }
 

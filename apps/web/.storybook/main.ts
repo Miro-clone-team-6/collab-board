@@ -1,7 +1,7 @@
-import type { StorybookConfig } from "@storybook/react-vite";
-import { dirname, resolve } from "path";
+import { dirname, resolve } from "node:path";
+import type { StorybookConfig } from "@storybook/react-webpack5";
 
-function getAbsolutePath(value: string): any {
+function getAbsolutePath(value: string): string {
   return dirname(require.resolve(`${value}/package.json`));
 }
 
@@ -10,37 +10,49 @@ const config: StorybookConfig = {
   addons: [
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-interactions"),
+    getAbsolutePath("@storybook/addon-webpack5-compiler-swc"),
   ],
   framework: {
-    name: getAbsolutePath("@storybook/react-vite"),
+    name: getAbsolutePath("@storybook/react-webpack5"),
     options: {},
   },
-  docs: {
-    autodocs: "tag",
-  },
-  viteFinal: async (config) => {
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve?.alias,
-          "@": resolve(__dirname, "../../../packages/ui/src"),
-        },
-      },
-      optimizeDeps: {
-        ...config.optimizeDeps,
-        // 👇 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Исключаем ВСЁ, что вызывает конфликт pre-bundling
-        exclude: [
-          "@storybook/react",
-          "@storybook/react-vite",
-          "@storybook/addon-essentials",
-          "@storybook/addon-interactions",
-          "@storybook/addon-docs", // <-- ИМЕННО ЭТОТ ПАКЕТ ВЫЗЫВАЕТ ОШИБКУ jsdoc-type-pratt-parser
-          "jsdoc-type-pratt-parser",
-        ],
-      },
+  webpackFinal: async (config) => {
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias as Record<string, string>),
+      "@": resolve(__dirname, "../../../packages/ui/src"),
     };
+
+    config.module = config.module || { rules: [] };
+
+    // Удаляем стандартное правило Storybook для CSS
+    config.module.rules = (config.module.rules || []).filter((rule) => {
+      if (!rule || typeof rule === "string") return true;
+      const test = (rule as { test?: RegExp | string }).test;
+      return !(test instanceof RegExp && test.source.includes("\\.css"));
+    });
+
+    // Добавляем своё правило (совместимое с postcss-loader v8)
+    config.module.rules.push({
+      test: /\.css$/,
+      use: [
+        require.resolve("style-loader"),
+        {
+          loader: require.resolve("css-loader"),
+          options: { importLoaders: 1 },
+        },
+        {
+          loader: require.resolve("postcss-loader"),
+          options: {
+            postcssOptions: {
+              plugins: [["@tailwindcss/postcss", {}]],
+            },
+          },
+        },
+      ],
+    });
+
+    return config;
   },
 };
 
