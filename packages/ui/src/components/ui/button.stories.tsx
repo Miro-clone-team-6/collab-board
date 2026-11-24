@@ -1,27 +1,29 @@
-// @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, Loader2, Mail } from "lucide-react";
 import { Button } from "./button";
 
 const meta: Meta<typeof Button> = {
-  title: "UI Kit/Button",
+  title: "UI/Button",
   component: Button,
   tags: ["autodocs"],
-  // 👇 ЭТО добавляет интерактивную панель "Controls" внизу
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "secondary", "outline", "ghost", "link", "destructive"],
-      description: "Визуальный стиль кнопки",
+      options: ["default", "destructive", "outline", "secondary", "ghost", "link"],
     },
     size: {
       control: "select",
       options: ["default", "sm", "lg", "icon"],
-      description: "Размер кнопки",
     },
-    disabled: {
-      control: "boolean",
-      description: "Блокирует кнопку",
+    disabled: { control: "boolean" },
+    asChild: { control: "boolean" },
+  },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Интерактивные кнопки с 4 основными вариантами (Primary, Secondary, Ghost, Destructive), 3 размерами и состояниями loading/disabled. Радиус 8px, transition 120ms.",
+      },
     },
   },
 };
@@ -29,77 +31,130 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-// 1. Основная кнопка
-export const Default: Story = {
+export const Primary: Story = {
   args: {
-    children: "Создать доску",
+    children: "Create Board",
     variant: "default",
-    size: "default",
   },
 };
 
-// 2. Второстепенная
 export const Secondary: Story = {
   args: {
-    children: "Отмена",
+    children: "Cancel",
     variant: "secondary",
   },
 };
 
-// 3. Контурная
-export const Outline: Story = {
-  args: {
-    children: "Поделиться",
-    variant: "outline",
-  },
-};
-
-// 4. Призрачная (для меню и тулбаров)
 export const Ghost: Story = {
   args: {
-    children: "Подробнее",
+    children: "View All",
     variant: "ghost",
   },
 };
 
-// 5. Опасное действие
 export const Destructive: Story = {
   args: {
-    children: "Удалить workspace",
+    children: "Delete",
     variant: "destructive",
   },
 };
 
-// 6. С иконкой
+export const Outline: Story = {
+  args: {
+    children: "Outline",
+    variant: "outline",
+  },
+};
+
+export const Link: Story = {
+  args: {
+    children: "Read more",
+    variant: "link",
+  },
+};
+
 export const WithIcon: Story = {
   args: {
     children: (
       <>
-        <Plus className="mr-2 h-4 w-4" />
-        Новый элемент
+        <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
+        Login with Email
       </>
     ),
   },
 };
 
-// 7. Только иконка (размер icon)
 export const IconOnly: Story = {
   args: {
-    variant: "ghost",
+    variant: "outline",
     size: "icon",
-    children: <Trash2 className="h-4 w-4" />,
+    children: <ArrowRight className="h-4 w-4" aria-hidden="true" />,
   },
 };
 
-// 8. Состояние загрузки
 export const Loading: Story = {
   args: {
+    disabled: true,
     children: (
       <>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        Сохранение...
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+        Creating...
       </>
     ),
-    disabled: true,
   },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: "Disabled",
+  },
+};
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex items-center gap-4">
+      <Button size="sm">Small</Button>
+      <Button size="default">Default</Button>
+      <Button size="lg">Large</Button>
+      <Button size="icon" variant="outline">
+        <Mail className="h-4 w-4" aria-hidden="true" />
+      </Button>
+    </div>
+  ),
+};
+
+export const AllVariants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
+        <Button variant="default">Default</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button variant="destructive">Destructive</Button>
+        <Button variant="link">Link</Button>
+      </div>
+      <div className="flex items-center gap-4 opacity-50">
+        <Button variant="default" disabled>
+          Default
+        </Button>
+        <Button variant="secondary" disabled>
+          Secondary
+        </Button>
+        <Button variant="outline" disabled>
+          Outline
+        </Button>
+        <Button variant="ghost" disabled>
+          Ghost
+        </Button>
+        <Button variant="destructive" disabled>
+          Destructive
+        </Button>
+        <Button variant="link" disabled>
+          Link
+        </Button>
+      </div>
+    </div>
+  ),
 };

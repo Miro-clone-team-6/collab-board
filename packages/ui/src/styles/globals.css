@@ -9,7 +9,7 @@
  * Классы компонентов UI-кита. Tailwind 4 сам ищет классы только в проекте, где идёт сборка,
  * и пропускает node_modules, через который пакет попадает в приложение. Путь в @source
  * считается от этого файла; имя пакета здесь не работает.
-*/
+ */
 
 /* Относительный путь от src/styles/ к src/ */
 @source "../";
@@ -19,63 +19,141 @@
 
 :root {
   --radius: 0.5rem;
+
+  /* Шрифты (задаются через CSS-переменные из next/font в layout.tsx) */
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Background & Foreground */
   --background: hsl(0 0% 100%);
-  --foreground: hsl(240 10% 3.9%);
+  --foreground: hsl(222 84% 5%); /* #0F172A — Figma text-primary */
+  --bg-page: hsl(210 40% 98%); /* #F8FAFC — Figma bg-page */
+  --bg-hover: hsl(214 32% 96%); /* #F1F5F9 */
+
+  /* Card & Popover */
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(240 10% 3.9%);
+  --card-foreground: hsl(222 84% 5%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(240 10% 3.9%);
-  --primary: hsl(240 5.9% 10%);
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(240 4.8% 95.9%);
-  --secondary-foreground: hsl(240 5.9% 10%);
-  --muted: hsl(240 4.8% 95.9%);
-  --muted-foreground: hsl(240 3.8% 46.1%);
-  --accent: hsl(240 4.8% 95.9%);
-  --accent-foreground: hsl(240 5.9% 10%);
-  --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 5.9% 90%);
-  --input: hsl(240 5.9% 90%);
-  --ring: hsl(240 5.9% 10%);
+  --popover-foreground: hsl(222 84% 5%);
+
+  /* Primary — Figma blue #2563EB */
+  --primary: hsl(221 83% 53%);
+  --primary-foreground: hsl(0 0% 100%);
+  --primary-hover: hsl(221 83% 45%); /* #1D4ED8 */
+  --primary-active: hsl(224 76% 40%); /* #1E40AF */
+  --primary-light: hsl(214 95% 93%); /* #DBEAFE */
+  --primary-subtle: hsl(214 100% 97%); /* #EFF6FF */
+
+  /* Secondary */
+  --secondary: hsl(214 32% 96%);
+  --secondary-foreground: hsl(222 84% 5%);
+
+  /* Muted */
+  --muted: hsl(214 32% 96%);
+  --muted-foreground: hsl(215 16% 47%); /* #64748B */
+
+  /* Accent */
+  --accent: hsl(214 32% 96%);
+  --accent-foreground: hsl(222 84% 5%);
+
+  /* Destructive */
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --destructive-hover: hsl(0 72% 51%); /* #DC2626 */
+  --destructive-light: hsl(0 93% 94%); /* #FEE2E2 */
+
+  /* Semantic */
+  --success: hsl(160 84% 39%); /* #10B981 */
+  --success-light: hsl(152 69% 91%); /* #D1FAE5 */
+  --warning: hsl(38 92% 50%); /* #F59E0B */
+  --warning-light: hsl(45 93% 90%); /* #FEF3C7 */
+
+  /* Borders */
+  --border: hsl(214 32% 91%); /* #E2E8F0 */
+  --border-hover: hsl(215 20% 82%); /* #CBD5E1 */
+  --input: hsl(214 32% 91%);
+  --ring: hsl(221 83% 53%);
+
+  /* Text scale */
+  --text-primary: hsl(222 84% 5%); /* #0F172A */
+  --text-secondary: hsl(215 20% 35%); /* #475569 */
+  --text-muted: hsl(215 16% 65%); /* #94A3B8 */
+
+  /* Canvas */
   --canvas-bg: hsl(0 0% 98%);
   --canvas-grid: hsl(0 0% 90%);
+
+  /* AI */
+  --ai-accent: hsl(263 90% 66%); /* #8B5CF6 */
+  --ai-background: hsl(260 60% 98%); /* #F5F3FF */
 }
 
 .dark {
-  --background: hsl(240 10% 3.9%);
-  --foreground: hsl(0 0% 98%);
-  --card: hsl(240 10% 3.9%);
-  --card-foreground: hsl(0 0% 98%);
-  --popover: hsl(240 10% 3.9%);
-  --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(0 0% 98%);
-  --primary-foreground: hsl(240 5.9% 10%);
-  --secondary: hsl(240 3.7% 15.9%);
-  --secondary-foreground: hsl(0 0% 98%);
-  --muted: hsl(240 3.7% 15.9%);
-  --muted-foreground: hsl(240 5% 64.9%);
-  --accent: hsl(240 3.7% 15.9%);
-  --accent-foreground: hsl(0 0% 98%);
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 3.7% 15.9%);
-  --input: hsl(240 3.7% 15.9%);
-  --ring: hsl(240 4.9% 83.9%);
-  --canvas-bg: hsl(240 10% 4.5%);
-  --canvas-grid: hsl(240 5% 15%);
+  --background: hsl(222 84% 5%);
+  --foreground: hsl(210 40% 98%);
+  --bg-page: hsl(222 47% 3%); /* #020617 */
+  --bg-hover: hsl(217 33% 17%); /* #1E293B */
+
+  --card: hsl(217 33% 17%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(217 33% 17%);
+  --popover-foreground: hsl(210 40% 98%);
+
+  --primary: hsl(217 91% 60%); /* #3B82F6 */
+  --primary-foreground: hsl(222 84% 5%);
+  --primary-hover: hsl(217 91% 68%);
+  --primary-active: hsl(217 91% 75%);
+
+  --secondary: hsl(217 33% 17%);
+  --secondary-foreground: hsl(210 40% 98%);
+
+  --muted: hsl(217 33% 17%);
+  --muted-foreground: hsl(215 20% 65%);
+
+  --accent: hsl(217 33% 17%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  --destructive: hsl(0 63% 31%);
+  --destructive-foreground: hsl(0 0% 100%);
+
+  --border: hsl(217 33% 17%);
+  --input: hsl(217 33% 17%);
+  --ring: hsl(217 91% 60%);
+
+  --text-primary: hsl(210 40% 98%);
+  --text-secondary: hsl(215 20% 65%);
+  --text-muted: hsl(215 16% 47%);
+
+  --canvas-bg: hsl(222 47% 5%);
+  --canvas-grid: hsl(222 20% 15%);
+
+  --ai-accent: hsl(263 90% 70%);
+  --ai-background: hsl(263 50% 15%);
 }
 
 /* inline: утилиты ссылаются на переменные темы, а не на значения, поэтому .dark их переопределяет. */
 @theme inline {
+  /* Шрифты */
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-jakarta);
+  --font-mono: var(--font-mono);
+
+  /* Core mapping */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-bg-page: var(--bg-page);
+  --color-bg-hover: var(--bg-hover);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-light: var(--primary-light);
+  --color-primary-subtle: var(--primary-subtle);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -84,41 +162,57 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-destructive-light: var(--destructive-light);
   --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-canvas-bg: var(--canvas-bg);
   --color-canvas-grid: var(--canvas-grid);
 
+  /* Semantic */
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+
+  /* Text scale */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* AI */
+  --color-ai-accent: var(--ai-accent);
+  --color-ai-background: var(--ai-background);
+
+  /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Палитра стикеров не зависит от темы. */
+/* Палитра стикеров и доп. токены (не зависят от темы). */
 @theme {
-  --color-sticky-yellow: #fef08a;
-  --color-sticky-green: #bbf7d0;
-  --color-sticky-blue: #bae6fd;
-  --color-sticky-pink: #fbcfe8;
-  --color-sticky-purple: #e9d5ff;
-  --color-sticky-orange: #fed7aa;
-  /* Transition из дизайн-системы */
+  /* Sticky Note Canvas Swatches — 6 Fixed Pastels (Figma) */
+  --color-sticky-yellow: #fef3c7;
+  --color-sticky-yellow-border: #fde68a;
+  --color-sticky-pink: #fce7f3;
+  --color-sticky-pink-border: #fbcfe8;
+  --color-sticky-blue: #dbeafe;
+  --color-sticky-blue-border: #bfdbfe;
+  --color-sticky-green: #d1fae5;
+  --color-sticky-green-border: #a7f3d0;
+  --color-sticky-violet: #ede9fe;
+  --color-sticky-violet-border: #ddd6fe;
+  --color-sticky-orange: #ffedd5;
+  --color-sticky-orange-border: #fed7aa;
+
+  /* Transition */
   --transition-fast: 120ms ease-out;
 
-  /* Sticker palette (6 цветов) */
-  --color-sticky-yellow: #fef08a;
-  --color-sticky-pink: #fbcfe8;
-  --color-sticky-blue: #bae6fd;
-  --color-sticky-green: #bbf7d0;
-  --color-sticky-purple: #e9d5ff;
-  --color-sticky-orange: #fed7aa;
-
-  /* AI accent */
-  --color-ai-accent: #8b5cf6;
-  --color-ai-background: #f5f3ff;
-
-  /* Tag colors для тегов */
+  /* Tag colors */
   --color-tag-strategy: #f3e8ff;
   --color-tag-strategy-text: #7e22ce;
   --color-tag-design: #f1f5f9;
@@ -148,8 +242,30 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--color-bg-page);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Заголовки — Plus Jakarta Sans */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  /* Моноширинный текст */
+  code,
+  pre,
+  kbd {
+    font-family: var(--font-mono);
   }
 
   /* Стандартная анимация для интерактивных элементов */
