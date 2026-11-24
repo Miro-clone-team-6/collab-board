@@ -10,7 +10,13 @@ type ServerMessage =
   | { event: "patch"; data: { elements: VersionedElement[]; files: BinaryFiles; own?: true } }
   | { event: "conflict"; data: { elements: VersionedElement[] } };
 
-const CONNECTED = "WebSocket: общая тестовая комната подключена";
+export type BoardConnectionStatus =
+  | "connecting"
+  | "connected"
+  | "syncing"
+  | "reconnecting"
+  | "conflict";
+
 const SEND_INTERVAL = 60;
 const RECONNECT_DELAY = 500;
 const RESPONSE_TIMEOUT = 5_000;
@@ -45,7 +51,7 @@ function stickerId(element: ExcalidrawElement) {
 
 export function connectExcalidrawRoom(
   api: ExcalidrawImperativeAPI,
-  setConnection: (message: string) => void,
+  setConnection: (status: BoardConnectionStatus) => void,
 ) {
   const url = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001");
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
@@ -119,8 +125,8 @@ export function connectExcalidrawRoom(
         !retriedDeletion && changes.length > 0 && changes.every(({ element }) => element.isDeleted),
     };
     socket.send(JSON.stringify({ event: "patch", data: { changes, files } }));
-    setConnection("WebSocket: ожидание подтверждения правок…");
-    waitForResponse("WebSocket: сервер не подтвердил правки. Восстановление соединения…");
+    setConnection("syncing");
+    waitForResponse();
   }
 
   function scheduleSend() {
@@ -161,7 +167,7 @@ export function connectExcalidrawRoom(
       if (hasSnapshot) api.history.clear();
       hasSnapshot = true;
       ready = true;
-      setConnection(CONNECTED);
+      setConnection("connected");
       return;
     }
 
@@ -180,7 +186,7 @@ export function connectExcalidrawRoom(
       if (own) {
         clearTimeout(responseTimer);
         pending = undefined;
-        setConnection(CONNECTED);
+        setConnection("connected");
       }
     }
 
@@ -224,7 +230,7 @@ export function connectExcalidrawRoom(
           })
         : [];
       if (deletions.length) send(deletions, {}, true);
-      else setConnection("WebSocket: конфликт правок. Показано состояние сервера.");
+      else setConnection("conflict");
     }
 
     render(remaining);
@@ -237,27 +243,26 @@ export function connectExcalidrawRoom(
     socket.close();
   }
 
-  function reconnect(message: string) {
+  function reconnect() {
     ready = false;
     pending = undefined;
     clearTimeout(sendTimer);
     sendTimer = undefined;
     clearTimeout(responseTimer);
     closeSocket();
-    setConnection(message);
+    setConnection("reconnecting");
     reconnectTimer = setTimeout(connect, RECONNECT_DELAY);
   }
 
-  function waitForResponse(message: string) {
-    responseTimer = setTimeout(() => reconnect(message), RESPONSE_TIMEOUT);
+  function waitForResponse() {
+    responseTimer = setTimeout(reconnect, RESPONSE_TIMEOUT);
   }
 
   function connect() {
     socket = new WebSocket(url);
     socket.onmessage = (event) => applyMessage(JSON.parse(event.data) as ServerMessage);
-    socket.onclose = () =>
-      reconnect("WebSocket отключён. Переподключение… Локальные правки будут сброшены.");
-    waitForResponse("WebSocket: снимок комнаты не получен. Восстановление соединения…");
+    socket.onclose = reconnect;
+    waitForResponse();
   }
 
   const unsubscribe = api.onChange(scheduleSend);
