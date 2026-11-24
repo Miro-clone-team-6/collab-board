@@ -1,15 +1,15 @@
 # HTTP-контракты
 
-> Статус: ✅ Используется бэкендом и фронтендом для healthcheck.
+> Статус: ✅ Общий пакет схем и типов; используется для healthcheck.
 
-Схемы Zod лежат в `src/<feature>/`, типы выводятся через `z.infer` и экспортируются
-из `src/index.ts`. Пакет описывает JSON запросов и ответов; даты передаются строками.
-Не добавляем сюда Prisma-модели, доменные сущности, Nest-декораторы и React-хуки.
+Устройство и подключение к Nest — в [backend](../../docs/backend/backend-structure.md#http-контракты).
+Обоснование — [ADR 0003-shared-contracts](../../docs/decisions/0003-shared-contracts.md).
 
-Сначала согласуем схему, метод, путь и статусы ответа. После этого фронтенд
-может работать с моками, пока бэкенд реализует эндпоинт.
+Команды из корня репозитория:
 
-Из корня: `pnpm build:contracts`. При изменениях схем во время разработки:
-`pnpm --filter @packages/contracts dev`.
+```bash
+pnpm build:contracts
+pnpm --filter @packages/contracts dev
+```
 
-Подключение к Nest и ограничения — [ADR 0002](../../docs/decisions/0002-shared-contracts.md).
+Первая команда собирает пакет, вторая запускает его сборку в watch-режиме.

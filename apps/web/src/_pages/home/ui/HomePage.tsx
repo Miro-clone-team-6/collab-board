@@ -5,7 +5,6 @@ import Link from "next/link";
 import { getBoards } from "@/entities/board";
 import { getCurrentUser } from "@/entities/user";
 import { getHealth } from "@/shared/api/get-health";
-import { routes } from "@/shared/config/routes";
 import { BoardList } from "@/widgets/board-list";
 import { Header } from "@/widgets/header";
 
@@ -26,7 +25,7 @@ export function HomePage() {
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Недавние доски</h2>
-            <Link href={routes.boards} className="text-sm underline">
+            <Link href="/boards" className="text-sm underline">
               Все доски
             </Link>
           </div>
