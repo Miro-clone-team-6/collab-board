@@ -1,3 +1,39 @@
+## 🧩 UI-кит (`packages/ui`)
+
+Общая библиотека переиспользуемых UI-компонентов, построенная на базе **shadcn/ui**, **Radix UI** и **Tailwind CSS v4**. Все компоненты полностью типизированы (TypeScript strict) и задокументированы в Storybook.
+
+### 📂 Структура пакета
+
+```text
+packages/ui/
+├── src/
+│   ├── components/
+│   │   ├── ui/          # Базовые примитивы (Button, Input, Dialog...)
+│   │   └── layout/      # Составные компоненты приложения (Sidebar, Navbar)
+│   ├── lib/utils.ts     # Утилита `cn()` (clsx + tailwind-merge)
+│   └── styles/globals.css  # Токены темы Tailwind v4 (@theme)
+└── package.json
+
+## Использование в приложении (apps/web)
+   Импортируйте компоненты напрямую из воркспейса @packages/ui:
+
+   import { Button } from "@packages/ui/components/ui/button";
+import { Sidebar, type SidebarSection } from "@packages/ui/components/layout/sidebar";
+
+export default function Dashboard() {
+  return (
+    <div className="flex h-screen">
+      <Sidebar sections={mySections} />
+      <main className="flex-1 p-8">
+        <Button variant="default">Создать доску</Button>
+      </main>
+    </div>
+  );
+}
+
+[!IMPORTANT]
+Убедитесь, что в apps/web/tsconfig.json корректно настроены алиасы путей (path aliases) для @packages/ui.
+
 ## 🎨 Дизайн-токены и стилизация
 
 > [!IMPORTANT]
