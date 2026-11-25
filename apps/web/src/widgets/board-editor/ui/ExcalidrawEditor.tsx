@@ -11,8 +11,9 @@ import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { StickyNote } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { type BoardConnectionStatus, connectExcalidrawRoom } from "../model/excalidraw-room";
+import { connectExcalidrawRoom } from "../model/excalidraw-room";
 import "@excalidraw/excalidraw/index.css";
+import { BoardConnectionStatus } from "../model/types";
 
 const connectionIndicator = {
   connecting: { label: "Подключение к доске", color: "bg-muted-foreground" },
