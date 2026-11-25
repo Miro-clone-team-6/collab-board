@@ -9,6 +9,34 @@ import {
 import { z } from "zod";
 
 const elementSchema = z.looseObject({ id: z.string(), isDeleted: z.boolean() });
+
+const fileSchema = z.object({
+  id: z.string().min(1),
+  // BinaryFileData in Excalidraw 0.18.1 accepts IMAGE_MIME_TYPES and MIME_TYPES.binary.
+  mimeType: z.enum([
+    "image/svg+xml",
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/webp",
+    "image/bmp",
+    "image/x-icon",
+    "image/avif",
+    "image/jfif",
+    "application/octet-stream",
+  ]),
+  dataURL: z.string(),
+  created: z.number(),
+  lastRetrieved: z.number().optional(),
+  version: z.number().optional(),
+});
+
+const filesSchema = z
+  .record(z.string(), fileSchema)
+  .refine((files) => Object.entries(files).every(([key, file]) => file.id === key), {
+    message: "File id must match its key",
+  });
+
 const patchSchema = z.object({
   changes: z.array(
     z.object({
@@ -16,10 +44,11 @@ const patchSchema = z.object({
       element: elementSchema,
     }),
   ),
-  files: z.record(z.string(), z.unknown()),
+  files: filesSchema,
 });
 
 type VersionedElement = { element: z.infer<typeof elementSchema>; revision: number };
+type BoardFiles = z.infer<typeof filesSchema>;
 type Peer = { readyState: number; send: (message: string) => void };
 
 @WebSocketGateway({ path: "/board-sync" })
@@ -28,7 +57,7 @@ export class BoardSyncGateway implements OnGatewayConnection {
   server!: { clients: Set<Peer> };
 
   private readonly elements = new Map<string, VersionedElement>();
-  private readonly files: Record<string, unknown> = Object.create(null);
+  private readonly files: BoardFiles = Object.create(null);
   private revision = 0;
 
   handleConnection(client: Peer) {
