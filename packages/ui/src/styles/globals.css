@@ -135,9 +135,9 @@
 /* inline: утилиты ссылаются на переменные темы, а не на значения, поэтому .dark их переопределяет. */
 @theme inline {
   /* Шрифты */
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-jakarta);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 
   /* Core mapping */
   --color-background: var(--background);

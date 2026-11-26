@@ -8,9 +8,7 @@
     "build": "next build",
     "start": "next start --port 3000",
     "lint:fsd": "steiger ./src",
-    "typecheck": "next typegen && tsc --noEmit",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@packages/contracts": "workspace:*",
@@ -24,28 +22,15 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "3.2.8",
     "@feature-sliced/steiger-plugin": "0.8.2",
     "@packages/typescript-config": "workspace:*",
-    "@storybook/addon-essentials": "8.4.7",
-    "@storybook/addon-interactions": "8.4.7",
-    "@storybook/addon-links": "8.4.7",
-    "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
-    "@storybook/blocks": "8.4.7",
-    "@storybook/react": "8.4.7",
-    "@storybook/react-webpack5": "8.4.7",
     "@tailwindcss/postcss": "catalog:",
     "@tanstack/react-query-devtools": "^5.66.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "css-loader": "^7.1.5",
-    "postcss-loader": "^8.2.2",
     "steiger": "0.10.0",
-    "storybook": "8.4.7",
-    "style-loader": "^4.0.0",
     "tailwindcss": "catalog:",
-    "typescript": "catalog:",
-    "webpack": "^5.94.0"
+    "typescript": "catalog:"
   }
 }

@@ -1,5 +1,5 @@
 import type { Decorator, Preview } from "@storybook/react";
-import "../../../packages/ui/src/styles/globals.css";
+import "../src/styles/globals.css";
 
 const withTheme: Decorator = (Story) => (
   <div className="min-h-screen bg-background text-foreground p-8 font-sans antialiased">

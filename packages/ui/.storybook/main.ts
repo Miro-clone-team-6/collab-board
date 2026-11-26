@@ -6,7 +6,7 @@ function getAbsolutePath(value: string): string {
 }
 
 const config: StorybookConfig = {
-  stories: ["../../../packages/ui/src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: ["../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-interactions"),
@@ -20,12 +20,11 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
       ...(config.resolve.alias as Record<string, string>),
-      "@": resolve(__dirname, "../../../packages/ui/src"),
+      "@": resolve(__dirname, "../src"),
     };
 
     config.module = config.module || { rules: [] };
 
-    // Удаляем стандартное правило Storybook для CSS
     config.module.rules = (config.module.rules || []).filter((rule) => {
       if (!rule || typeof rule === "string") return true;
       const test = (rule as { test?: RegExp | string }).test;

@@ -11,7 +11,9 @@
     "./components/*": "./src/components/*"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.2.1",
@@ -41,10 +43,23 @@
   },
   "devDependencies": {
     "@packages/typescript-config": "workspace:*",
-    "@storybook/react": "8.4.7",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "@storybook/addon-essentials": "8.4.7",
+    "@storybook/addon-interactions": "8.4.7",
+    "@storybook/addon-links": "8.4.7",
+    "@storybook/addon-webpack5-compiler-swc": "^3.0.0",
+    "@storybook/blocks": "8.4.7",
+    "@storybook/react": "8.4.7",
+    "@storybook/react-webpack5": "8.4.7",
+    "@chromatic-com/storybook": "3.2.8",
+    "css-loader": "^7.1.5",
+    "postcss-loader": "^8.2.2",
+    "storybook": "8.4.7",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.94.0"
   }
 }

@@ -4,7 +4,7 @@
 
 ## 🛠 Технологический стек
 
-- **Фреймворк**: React 18 + TypeScript (Strict mode)
+- **Фреймворк**: React 19 + TypeScript (Strict mode)
 - **Стилизация**: Tailwind CSS v4 (CSS-first конфигурация, файла `tailwind.config.ts` нет)
 - **Компоненты**: Примитивы Radix UI + архитектура shadcn/ui
 - **Документация**: Storybook 8.4.7 + Webpack 5 builder
