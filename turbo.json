@@ -12,7 +12,16 @@
       "cache": false,
       "persistent": true,
       "interruptible": true,
-      "passThroughEnv": ["PORT", "DATABASE_URL", "ALLOWED_ORIGINS", "NODE_ENV"]
+      "passThroughEnv": [
+        "PORT",
+        "DATABASE_URL",
+        "ALLOWED_ORIGINS",
+        "NODE_ENV",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DB",
+        "POSTGRES_PORT"
+      ]
     },
     "//#lint:biome": {},
     "//#lint:docs": {

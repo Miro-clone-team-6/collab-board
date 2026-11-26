@@ -1,5 +1,6 @@
 import { registerAs } from "@nestjs/config";
 import { z } from "zod";
+import { resolveDatabaseUrl } from "./database-url.js";
 
 const databaseEnvironment = z.object({
   DATABASE_URL: z
@@ -9,7 +10,7 @@ const databaseEnvironment = z.object({
 });
 
 export function readDatabaseConfig(environment: NodeJS.ProcessEnv) {
-  const result = databaseEnvironment.safeParse(environment);
+  const result = databaseEnvironment.safeParse({ DATABASE_URL: resolveDatabaseUrl(environment) });
   if (!result.success) {
     throw new Error("Invalid DATABASE_URL: expected a PostgreSQL connection URL");
   }

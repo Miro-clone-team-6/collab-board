@@ -1,5 +1,6 @@
 import { registerAs } from "@nestjs/config";
 import { z } from "zod";
+import { envFilePath, readEnvFile } from "./env-file.js";
 
 const origin = z.url().refine((value) => {
   if (!URL.canParse(value)) return false;
@@ -39,4 +40,6 @@ export function readHttpConfig(environment: NodeJS.ProcessEnv) {
   };
 }
 
-export const httpConfig = registerAs("http", () => readHttpConfig(process.env));
+export const httpConfig = registerAs("http", () =>
+  readHttpConfig({ ...readEnvFile(envFilePath), ...process.env }),
+);
