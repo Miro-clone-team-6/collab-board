@@ -7,6 +7,7 @@ engineStrict: true
 allowBuilds:
   "@prisma/engines": true
   "@scarf/scarf": false # install-аналитика не нужна для работы проекта
+  '@swc/core': true
   esbuild: true
   prisma: true
 

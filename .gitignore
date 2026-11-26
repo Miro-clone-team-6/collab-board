@@ -39,3 +39,6 @@
 **/coverage/
 **/*.lcov
 **/coverage.out
+
+*storybook.log
+storybook-static
