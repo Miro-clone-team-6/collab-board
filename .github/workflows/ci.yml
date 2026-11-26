@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-checks:
+    name: PR checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    env:
+      HUSKY: "0"
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/collab_board_ci
+
+    services:
+      postgres:
+        image: postgres:16.8-alpine3.21
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: collab_board_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d collab_board_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Install pnpm
+        run: npm install --global "$(node -p 'require("./package.json").packageManager')"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Database migrations
+        run: pnpm db:migrate:deploy
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
