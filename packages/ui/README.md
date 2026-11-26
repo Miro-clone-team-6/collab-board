@@ -50,10 +50,10 @@ pnpm install
 ### Запуск Storybook 
 
 # Из корня монорепозитория
-pnpm --filter web storybook
+pnpm --filter ui storybook
 
 # Или перейдите в apps/web
-cd apps/web
-pnpm run storybook
+cd packages\ui
+pnpm run storybook   
 
 Storybook будет доступен по адресу http://localhost:6006.
