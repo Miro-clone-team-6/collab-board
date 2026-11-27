@@ -37,6 +37,7 @@
 # Logs and test coverage
 **/npm-debug.log*
 **/pnpm-debug.log*
+**/debug-storybook.log
 **/coverage/
 **/*.lcov
 **/coverage.out

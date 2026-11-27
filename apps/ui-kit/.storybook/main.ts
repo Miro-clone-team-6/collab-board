@@ -1,9 +1,15 @@
+import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
 
 const config: StorybookConfig = {
   framework: "@storybook/react-vite",
-  stories: ["../../../packages/ui/src/ui/**/*.stories.tsx"],
+  stories: [
+    {
+      directory: fileURLToPath(new URL("./ui", import.meta.resolve("@packages/ui"))),
+      files: "**/*.stories.tsx",
+    },
+  ],
   viteFinal: (config) =>
     mergeConfig(config, {
       optimizeDeps: {
