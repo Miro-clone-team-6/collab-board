@@ -21,7 +21,7 @@
     "lint:docs": "remark . --quiet --frail --no-stdout",
     "lint:fix": "biome check --write --no-errors-on-unmatched",
     "format": "biome format --write --no-errors-on-unmatched",
-    "infra:up": "docker compose up -d",
+    "infra:up": "docker compose up -d postgres",
     "infra:down": "docker compose down",
     "infra:logs": "docker compose logs -f",
     "db:migrate": "pnpm --filter api db:migrate:dev",

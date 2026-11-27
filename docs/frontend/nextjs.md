@@ -40,9 +40,10 @@ health-запроса: это заглушка, а не образец.
 
 ## Запросы к API
 
-`next.config.ts` проксирует `/api/*` на адрес из `NEXT_PUBLIC_API_URL`
-(по умолчанию `http://localhost:3001`). Клиент обращается к своему origin по
-относительному пути (`/api/v1/health`), поэтому CORS не нужен.
+`next.config.ts` проксирует `/api/*` на адрес из `API_INTERNAL_URL`, затем
+из `NEXT_PUBLIC_API_URL`, с резервным адресом `http://localhost:3001`. При сборке
+Docker-образа используется `http://api:3001`. Клиент обращается к своему origin
+по относительному пути (`/api/v1/health`), поэтому CORS не нужен.
 
 Пакеты монорепозитория web берёт из исходников: Next компилирует их по списку
 `transpilePackages` в `next.config.ts`. Новый пакет, который импортирует web,

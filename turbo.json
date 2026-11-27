@@ -13,6 +13,7 @@
       "persistent": true,
       "interruptible": true,
       "passThroughEnv": [
+        "API_INTERNAL_URL",
         "PORT",
         "DATABASE_URL",
         "ALLOWED_ORIGINS",
@@ -20,6 +21,7 @@
         "POSTGRES_USER",
         "POSTGRES_PASSWORD",
         "POSTGRES_DB",
+        "POSTGRES_HOST",
         "POSTGRES_PORT"
       ]
     },

@@ -9,7 +9,7 @@
 
 ## Быстрый старт
 
-Нужны Node.js 26.x (версия задана в `.nvmrc`), pnpm 12.18.0, Docker.
+Нужны Node.js 26.x (версия задана в `.nvmrc`), pnpm 12.18.0 и Docker для PostgreSQL.
 
 Установить и выбрать Node через nvm, затем установить pnpm (Corepack не входит в Node.js 26):
 
