@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@packages/ui";
+import { Button } from "@packages/ui/components/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useIsMounted } from "../lib/use-is-mounted";

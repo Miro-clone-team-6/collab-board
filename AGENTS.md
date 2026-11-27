@@ -17,7 +17,6 @@
   Без зависимостей от Nest, Prisma и React.
 - `apps/ui-kit` — каталог компонентов на Storybook и Vite.
 - `packages/ui` — общие компоненты и их истории, стили (Tailwind 4, тема) и PostCSS-конфиг приложений.
-- `packages/shared` — хелпер `cn` для CSS-классов.
 - `packages/typescript-config` — общие tsconfig.
 
 Пустые заготовки (только `.gitkeep`): `apps/landing`, `apps/ui-docs`, `apps/telegram-bot`.

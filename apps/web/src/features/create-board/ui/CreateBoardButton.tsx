@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@packages/ui";
+import { Button } from "@packages/ui/components/button";
 import { Plus } from "lucide-react";
 
 export function CreateBoardButton() {
