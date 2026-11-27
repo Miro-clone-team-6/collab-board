@@ -15,7 +15,8 @@
 - `apps/api` — NestJS 12 + Prisma + Swagger. Глобальный префикс `api/v1`, модули в `src/modules/*`.
 - `packages/contracts` — общие Zod-схемы HTTP-запросов/ответов и выведенные TS-типы.
   Без зависимостей от Nest, Prisma и React.
-- `packages/ui` — общие стили (Tailwind 4, тема) и PostCSS-конфиг приложений; компонентов пока нет.
+- `apps/ui-kit` — каталог компонентов на Storybook и Vite.
+- `packages/ui` — общие компоненты и их истории, стили (Tailwind 4, тема) и PostCSS-конфиг приложений.
 - `packages/shared` — хелпер `cn` для CSS-классов.
 - `packages/typescript-config` — общие tsconfig.
 
@@ -27,6 +28,8 @@
 ```bash
 pnpm infra:up          # docker: PostgreSQL
 pnpm dev:web / dev:api
+pnpm dev:ui-kit        # Storybook на порту 6006
+pnpm build:ui-kit      # apps/ui-kit/storybook-static
 pnpm typecheck         # turbo, все workspaces
 pnpm test              # тесты без запуска полного окружения
 pnpm lint              # Biome (не ESLint/Prettier) + Steiger (правила FSD в apps/web) + ссылки в Markdown

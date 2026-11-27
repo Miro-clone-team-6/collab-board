@@ -64,5 +64,5 @@ jobs:
       - name: Tests
         run: pnpm test
 
-      - name: Build
+      - name: Build web, API, and Storybook
         run: pnpm build

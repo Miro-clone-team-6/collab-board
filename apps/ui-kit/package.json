@@ -1,0 +1,27 @@
+{
+  "name": "ui-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev --port 6006",
+    "build": "storybook build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@packages/ui": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@packages/typescript-config": "workspace:*",
+    "@storybook/react-vite": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "storybook": "10.6.9",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "8.4.0"
+  }
+}

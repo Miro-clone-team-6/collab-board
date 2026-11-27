@@ -8,6 +8,7 @@
 **/dist/
 /apps/api/src/generated/
 **/build/
+/apps/ui-kit/storybook-static/
 **/.turbo/
 **/*.tsbuildinfo
 

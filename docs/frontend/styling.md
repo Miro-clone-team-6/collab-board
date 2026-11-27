@@ -2,7 +2,12 @@
 
 Стили пишутся классами [Tailwind 4](https://tailwindcss.com/docs). Подключение Tailwind
 и тема (светлая и `.dark`) лежат в `packages/ui/src/styles/globals.css`; `apps/web`
-импортирует его в `src/_app/styles/globals.css`.
+импортирует его в `src/_app/styles/globals.css`, а Storybook — в `.storybook/preview.ts`.
+
+Общие компоненты лежат в `packages/ui/src/ui/<имя-в-kebab-case>/`. Файл компонента
+и соседняя история называются по имени компонента, например `Button.tsx` и
+`Button.stories.tsx`. Приложения импортируют компонент из `@packages/ui`.
+Каталог запускается через `pnpm dev:ui-kit` и собирается через `pnpm build:ui-kit`.
 
 ## Правила
 

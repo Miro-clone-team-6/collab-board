@@ -32,3 +32,4 @@ catalog:
   # Версии tailwindcss и @tailwindcss/postcss должны совпадать.
   tailwindcss: ^4.3.5
   "@tailwindcss/postcss": ^4.3.5
+  "@storybook/react-vite": 10.6.9

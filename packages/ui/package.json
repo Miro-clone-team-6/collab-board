@@ -6,12 +6,16 @@
   "exports": {
     ".": "./src/index.ts",
     "./globals.css": "./src/styles/globals.css",
-    "./postcss.config": "./postcss.config.mjs"
+    "./postcss.config": "./postcss.config.mjs",
+    "./ui/*": "./src/ui/*"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@packages/shared": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "tailwindcss": "catalog:"
@@ -20,6 +24,7 @@
     "@packages/typescript-config": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@storybook/react-vite": "catalog:"
   }
 }
