@@ -7,6 +7,7 @@
 | [0003-api-contracts](0003-api-contracts.md) | Генерация клиента из OpenAPI | ♻️ Заменено [0003-shared-contracts](0003-shared-contracts.md) |
 | [0003-shared-contracts](0003-shared-contracts.md) | Общие HTTP-контракты на Zod | ✅ Принято, реализовано для health |
 | [0019-backend-modules](0019-backend-modules.md) | Плоские модули backend | ✅ Принято, текущий пример — health |
+| [0020-basic-models-and-api](0020-basic-models-and-api.md) | Модели MVP и REST API с JWT | 💬 Предложено |
 
 ADR содержит контекст, решение, рассмотренные альтернативы и последствия.
 Инструкции и устройство кода находятся в разделах соответствующих частей системы.
