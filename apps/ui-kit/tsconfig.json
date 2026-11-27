@@ -1,0 +1,5 @@
+{
+  "extends": "@packages/typescript-config/jit-package.json",
+  "compilerOptions": { "types": ["vite/client"] },
+  "include": [".storybook/**/*.ts"]
+}

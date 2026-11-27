@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@packages/ui/components/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/shared/ui/button";
 import { useIsMounted } from "../lib/use-is-mounted";
 
 export function ThemeToggle() {
@@ -21,7 +21,7 @@ export function ThemeToggle() {
       variant="outline"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={isDark ? "Включить светлую тему" : "Включить тёмную тему"}
-      className="size-9 px-0"
+      size="icon-lg"
     >
       {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
     </Button>

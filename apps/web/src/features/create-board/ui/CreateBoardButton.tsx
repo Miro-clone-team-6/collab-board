@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@packages/ui/components/button";
 import { Plus } from "lucide-react";
-import { Button } from "@/shared/ui/button";
 
 export function CreateBoardButton() {
   // Заглушка до появления API.

@@ -21,6 +21,7 @@ peerDependencyRules:
     "tsconfck>typescript": "6"
 
 catalog:
+  cn: ^0.5.2
   zod: ^4.6.7
   typescript: 6.0.3
   "@types/node": ^26.0.0
@@ -32,3 +33,4 @@ catalog:
   # Версии tailwindcss и @tailwindcss/postcss должны совпадать.
   tailwindcss: ^4.3.5
   "@tailwindcss/postcss": ^4.3.5
+  "@storybook/react-vite": 10.6.9
